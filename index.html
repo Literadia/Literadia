@@ -1,0 +1,2078 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Literadia</title>
+    <style>
+       :root {
+    --primary: #D4A373;    /* Light brown for header */
+    --secondary: #CCD5AE;  /* Lighter shade for nav */
+    --accent: #E9EDC9;
+    --light: #FEFAE0;
+    --dark: #463F3A;
+    --success: #27ae60;
+    --error: #c0392b;
+}
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: var(--dark);
+        }
+        
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 1rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 1rem;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .logo svg {
+            margin-right: 0.5rem;
+        }
+        
+        .search-container {
+            flex-grow: 1;
+            margin: 0 2rem;
+            position: relative;
+        }
+        
+        .search-container input {
+            width: 100%;
+            padding: 0.6rem 1rem;
+            border-radius: 30px;
+            border: none;
+            outline: none;
+            padding-left: 2.5rem;
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 0.8rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--dark);
+        }
+        
+        .user-controls {
+            display: flex;
+            align-items: center;
+        }
+        
+        .cart-btn, .user-btn {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            margin-left: 1rem;
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: var(--accent);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+        
+        nav {
+    background-color: #CCD5AE;  /* Lighter brown for nav */
+    padding: 0.5rem 0;
+}
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            display: block;
+            transition: background-color 0.3s;
+        }
+        
+        nav ul li a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .hero {
+    background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('library.jpeg'); /* Replace with your image URL */
+    background-size: cover;
+    background-position: center;
+    height: 400px; /* You can adjust this height */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-align: center;
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+        .hero-content h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .hero-content p {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 0.6rem 1.5rem;
+            border-radius: 30px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+        
+        .btn-primary {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+        }
+        
+        .btn-primary:hover {
+            background-color: #e67e22;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin: 2rem 0 1.5rem;
+            position: relative;
+        }
+        
+        .section-title:after {
+            content: '';
+            display: block;
+            width: 50px;
+            height: 3px;
+            background-color: var(--accent);
+            margin: 0.5rem auto;
+        }
+        
+        .book-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .book-card {
+            background-color: white;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        
+        .book-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .book-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        
+        .book-details {
+            padding: 1rem;
+        }
+        
+        .book-title {
+            font-size: 1rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .book-author {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .book-price {
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        .add-to-cart {
+            width: 100%;
+            padding: 0.5rem;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .add-to-cart svg {
+            margin-right: 0.5rem;
+        }
+        
+        .add-to-cart:hover {
+            background-color: var(--secondary);
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .feature {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .feature svg {
+            fill: var(--primary);
+            width: 50px;
+            height: 50px;
+            margin-bottom: 1rem;
+        }
+        
+        .feature h3 {
+            margin-bottom: 0.5rem;
+        }
+        
+        footer {
+    background-color: #D4B8A0;
+    color: #463F3A;
+    padding: 2rem 0;
+    width: 100%;
+    position: relative;
+}
+
+.footer-content {
+    display: flex;
+    flex-direction: row;  /* Ensure horizontal layout */
+    justify-content: space-between;
+    gap: 2rem;
+    padding: 0 2rem;  /* Add horizontal padding */
+    max-width: 1400px;  /* Increased max-width for landscape feel */
+    margin: 0 auto;
+}
+
+.footer-column {
+    flex: 1;  /* Each column takes equal space */
+    min-width: 200px;  /* Minimum width for each column */
+}
+
+/* Remove underlines from footer headings */
+.footer-column h3:after {
+    display: none;  /* Remove the underline decoration */
+}
+
+/* Remove underlines from footer links */
+.footer-column ul li a {
+    color: #463F3A;
+    text-decoration: none;  /* Remove underlines from links */
+    transition: color 0.3s ease;
+}
+
+.footer-column ul li a:hover {
+    color: #8B7355;
+}
+
+.copyright {
+    text-align: center;
+    padding-top: 2rem;
+    margin-top: 2rem;
+    border-top: 1px solid rgba(70, 63, 58, 0.2);  /* Subtle separator */
+    color: #463F3A;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .footer-content {
+        flex-wrap: wrap;
+        gap: 1.5rem;
+    }
+
+    .footer-column {
+        flex: 1 1 45%;  /* Two columns on medium screens */
+        min-width: 150px;
+    }
+}
+
+@media (max-width: 480px) {
+    .footer-column {
+        flex: 1 1 100%;  /* Stack on small screens */
+    }
+}
+        
+        /* Cart Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 2rem;
+            width: 80%;
+            max-width: 800px;
+            border-radius: 5px;
+            position: relative;
+            animation: modalopen 0.3s;
+        }
+        
+        @keyframes modalopen {
+            from {opacity: 0; transform: translateY(-50px);}
+            to {opacity: 1; transform: translateY(0);}
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            color: #777;
+            cursor: pointer;
+        }
+        
+        .cart-item {
+            display: flex;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .cart-item-img {
+            width: 80px;
+            height: 100px;
+            object-fit: cover;
+            margin-right: 1rem;
+        }
+        
+        .cart-item-details {
+            flex-grow: 1;
+        }
+        
+        .cart-item-title {
+            font-weight: bold;
+            margin-bottom: 0.3rem;
+        }
+        
+        .cart-item-price {
+            color: var(--primary);
+            font-weight: bold;
+        }
+        
+        .cart-item-quantity {
+            display: flex;
+            align-items: center;
+            margin-top: 0.5rem;
+        }
+        
+        .quantity-btn {
+            width: 25px;
+            height: 25px;
+            background-color: #eee;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        
+        .quantity-input {
+            width: 40px;
+            height: 25px;
+            text-align: center;
+            border: 1px solid #ddd;
+            margin: 0 0.5rem;
+        }
+        
+        .cart-item-remove {
+            color: var(--error);
+            background: none;
+            border: none;
+            cursor: pointer;
+            margin-left: 1rem;
+        }
+        
+        .checkout-btn {
+    background: linear-gradient(135deg, #966F33, #C4A484);  /* Brown gradient */
+    color: white;
+    border: none;
+    padding: 1rem 2.5rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    position: relative;
+    overflow: hidden;
+    text-decoration: none;
+    display: inline-block;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    width: auto;  /* Override any existing width */
+    min-width: 200px;  /* Minimum width */
+}
+
+/* Hover effect */
+.checkout-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(150, 111, 51, 0.4);
+    background: linear-gradient(135deg, #C4A484, #DEB887);
+}
+
+/* Click effect */
+.checkout-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 10px rgba(150, 111, 51, 0.3);
+}
+
+/* Add shine effect */
+.checkout-btn::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        transparent,
+        rgba(255, 255, 255, 0.1),
+        transparent
+    );
+    transform: rotate(45deg);
+    transition: 0.5s;
+    opacity: 0;
+}
+
+.checkout-btn:hover::after {
+    opacity: 1;
+    left: 100%;
+}
+
+/* Cart summary styling to make the button stand out */
+.cart-summary {
+    text-align: right;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.95);
+    border-top: 1px solid #eee;
+}
+
+.cart-total {
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+    color: #966F33;  /* Match the brown theme */
+    font-weight: bold;
+}
+        
+        .empty-cart {
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .empty-cart svg {
+            width: 80px;
+            height: 80px;
+            fill: #ddd;
+            margin-bottom: 1rem;
+        }
+        
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .header-top {
+                flex-direction: column;
+            }
+            
+            .search-container {
+                margin: 1rem 0;
+                width: 100%;
+            }
+            
+            nav ul {
+                flex-wrap: wrap;
+            }
+            
+            .hero {
+                height: 250px;
+            }
+            
+            .hero-content h1 {
+                font-size: 2rem;
+            }
+            
+            .cart-item {
+                flex-direction: column;
+            }
+            
+            .cart-item-img {
+                margin-bottom: 1rem;
+            }
+        }
+
+        html {
+    scroll-behavior: smooth; /* Enable smooth scrolling for the whole page */
+}
+
+#books-section {
+    scroll-margin-top: 20px; /* Add some margin to the scroll target */
+}
+
+/* Update the explore button specific styles */
+.hero .btn-primary {
+    background-color: rgba(255, 255, 255, 0.2);  /* Semi-transparent background */
+    color: white;
+    border: 2px solid white;
+    padding: 0.8rem 2rem;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);  /* Adds a frosted glass effect */
+}
+
+.hero .btn-primary:hover {
+    background-color: rgba(255, 255, 255, 0.3);  /* Slightly more visible on hover */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.hero .btn-primary:active {
+    transform: translateY(0);
+}
+
+/* Update the modal and modal content styles */
+.modal-content {
+    background-color: white;
+    margin: 10% auto;
+    padding: 2rem;
+    width: 80%;
+    max-width: 800px;
+    border-radius: 5px;
+    position: relative;
+    animation: modalopen 0.3s;
+    max-height: 80vh; /* Set maximum height to 80% of viewport height */
+    overflow-y: auto; /* Enable vertical scrolling */
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling for iOS */
+}
+
+/* Add smooth scrollbar styling */
+.modal-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.modal-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.modal-content::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Make sure the close button stays visible */
+.close-btn {
+    position: sticky;
+    top: 0;
+    right: 0;
+    float: right;
+    font-size: 1.5rem;
+    color: #777;
+    cursor: pointer;
+    z-index: 1000;
+    padding: 0.5rem;
+    background: white;
+}
+
+/* Ensure cart items can scroll */
+#cart-items {
+    margin-top: 1rem;
+}
+
+/* Keep the cart summary visible at the bottom */
+.cart-summary {
+    position: sticky;
+    bottom: 0;
+    background: white;
+    padding: 1rem 0;
+    border-top: 1px solid #eee;
+    margin-top: 1rem;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .modal-content {
+        width: 95%;
+        margin: 5% auto;
+        padding: 1rem;
+    }
+}
+    
+    .icon {
+      width: 100px;
+      height: 100px;
+      position: relative;
+      margin-bottom: 15px;
+      transition: all 0.3s ease;
+    }
+    
+    .icon-name {
+      font-weight: bold;
+      font-size: 16px;
+      color: var(--dark);
+    }
+
+    .icon-section {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 4rem;
+      padding: 2rem;
+      margin: 2rem auto;
+      max-width: 1200px;
+      background: linear-gradient(to right, rgba(212, 163, 115, 0.1), rgba(204, 213, 174, 0.1));
+      border-radius: 15px;
+    }
+
+    .icon-link {
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.3s ease;
+    }
+
+    .icon-link:hover {
+      transform: translateY(-5px);
+    }
+
+    .icon-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 150px;
+      text-align: center;
+      padding: 20px;
+      border-radius: 12px;
+      transition: all 0.3s ease;
+    }
+
+    .icon-container:hover {
+      background: rgba(212, 163, 115, 0.1);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .icon-link:hover .icon-name {
+      color: var(--primary);
+    }
+
+    .icon-link:active {
+      transform: scale(0.95);
+    }
+
+    .icon-link:focus {
+      outline: 2px solid var(--primary);
+      outline-offset: 4px;
+      border-radius: 8px;
+    }
+
+    @media (max-width: 768px) {
+      .icon-section {
+        flex-direction: column;
+        gap: 2rem;
+      }
+      
+      .icon-link {
+        margin: 1rem 0;
+      }
+    }
+    
+    /* Physical Book Styles */
+    .physical-book {
+      position: relative;
+    }
+    
+    .book-cover {
+      width: 70px;
+      height: 90px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      border-radius: 8px;
+      position: relative;
+      box-shadow: 
+        0 10px 20px rgba(212, 163, 115, 0.2),
+        0 6px 6px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+    
+    .book-pages {
+      position: absolute;
+      right: 0;
+      width: 15px;
+      height: 86px;
+      background: var(--light);
+      top: 2px;
+      transform: skewY(-15deg);
+      border-radius: 0 2px 2px 0;
+    }
+    
+    .book-lines {
+      position: absolute;
+      top: 20px;
+      left: 10px;
+      width: 40px;
+      height: 2px;
+      background-color: var(--light);
+      box-shadow: 
+        0 12px 0 var(--light), 
+        0 24px 0 var(--light), 
+        0 36px 0 var(--light);
+    }
+    
+    .book-sparkle {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      color: var(--accent);
+      font-size: 20px;
+      text-shadow: 0 0 8px var(--accent);
+      animation: sparkle 2s infinite;
+    }
+    
+    /* E-Book Styles */
+    .ebook {
+      width: 80px;
+      height: 100px;
+      background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+      border-radius: 12px;
+      position: relative;
+      box-shadow: 
+        0 10px 20px rgba(204, 213, 174, 0.2),
+        0 6px 6px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+    
+    .ebook-screen {
+      position: absolute;
+      width: 60px;
+      height: 80px;
+      background-color: var(--light);
+      top: 10px;
+      left: 10px;
+      border-radius: 8px;
+      box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .ebook-text {
+      position: absolute;
+      top: 20px;
+      left: 15px;
+      width: 30px;
+      height: 2px;
+      background-color: var(--dark);
+      box-shadow: 
+        0 7px 0 var(--dark), 
+        0 14px 0 var(--dark), 
+        0 21px 0 var(--dark), 
+        0 28px 0 var(--dark);
+      opacity: 0.6;
+    }
+    
+    .ebook-letter {
+      position: absolute;
+      top: 20px;
+      right: 15px;
+      color: var(--primary);
+      font-weight: bold;
+      font-size: 24px;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    }
+    
+    .glow {
+      filter: drop-shadow(0 0 5px rgba(212, 163, 115, 0.5));
+    }
+
+    @keyframes sparkle {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .membership-banner {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    padding: 3rem 2rem;
+    margin: 2rem 0;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.membership-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 4rem;
+}
+
+.membership-info {
+    flex: 1;
+    color: white;
+}
+
+.membership-info h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.membership-features {
+    margin: 2rem 0;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+.feature-item svg {
+    width: 20px;
+    height: 20px;
+    margin-right: 1rem;
+    stroke: var(--accent);
+}
+
+.membership-price {
+    margin: 2rem 0;
+    display: flex;
+    align-items: baseline;
+}
+
+.price {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--accent);
+}
+
+.period {
+    font-size: 1.2rem;
+    margin-left: 0.5rem;
+    opacity: 0.8;
+}
+
+
+
+.membership-image {
+    flex: 1;
+    position: relative;
+    height: 400px;
+}
+
+.membership-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 15px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+}
+
+/* Hover effect for the entire banner */
+.membership-banner:hover {
+    transform: translateY(-5px);
+    transition: transform 0.3s ease;
+}
+
+/* Animation for features */
+.feature-item {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.5s ease forwards;
+}
+
+.feature-item:nth-child(1) { animation-delay: 0.2s; }
+.feature-item:nth-child(2) { animation-delay: 0.4s; }
+.feature-item:nth-child(3) { animation-delay: 0.6s; }
+
+@keyframes fadeInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}.membership-banner {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    padding: 3rem 2rem;
+    margin: 2rem 0;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.membership-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: left;
+    gap: 4rem;
+}
+
+
+    .membership-info h2 {
+        font-size: 2rem;
+    }
+
+    .feature-item {
+        justify-content: center;
+    }
+
+    .membership-price {
+        justify-content: center;
+    }
+
+    .membership-image {
+        height: 300px;
+        width: 100%;
+    }
+
+@media (max-width: 576px) {
+    .membership-banner {
+        padding: 2rem 1rem;
+        margin: 1rem 0;
+    }
+}
+
+    .membership-info h2 {
+        font-size: 1.8rem;
+    }
+
+    .price {
+        font-size: 2.5rem;
+    }
+
+.membership-card-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    perspective: 1000px;
+}
+
+.membership-card {
+    width: 400px;
+    height: 250px;
+    /* Change the gradient to more elegant colors */
+    background: linear-gradient(135deg, 
+        #966F33 0%,     /* Rich brown */
+        #C4A484 50%,    /* Warm beige */
+        #DEB887 100%    /* Light wood brown */
+    );
+    border-radius: 20px;
+    padding: 25px;
+    color: white;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.5s;
+    box-shadow: 
+        0 20px 40px rgba(0,0,0,0.3),
+        inset 0 0 40px rgba(255,255,255,0.1);
+}
+
+/* Enhanced card logo styling */
+.card-logo {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    background: linear-gradient(to right, #FFFFFF, #F5DEB3);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+}
+
+/* Enhanced chip appearance */
+.card-chip {
+    width: 50px;
+    height: 40px;
+    background: linear-gradient(45deg, #DAA520, #FFD700);
+    border-radius: 8px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Card number styling */
+.card-number {
+    color: #FFFFFF;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+}
+
+/* Name and expiry styling */
+.name, .date {
+    color: #FFFFFF;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+}
+
+/* Label styling */
+.label {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* Enhanced holographic effect */
+.membership-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        125deg,
+        rgba(255,255,255,0) 0%,
+        rgba(255,255,255,0.15) 10%,
+        rgba(255,255,255,0) 20%
+    );
+    opacity: 0.5;
+    z-index: 1;
+    transition: transform 0.5s;
+    border-radius: 20px;
+}
+
+/* Enhanced hover effects */
+.membership-card:hover {
+    transform: rotateY(15deg) rotateX(5deg);
+}
+
+.membership-card:hover::before {
+    transform: translateX(100%);
+}
+
+/* Security circle enhancement */
+.membership-card::after {
+    content: '';
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    background: radial-gradient(
+        circle at center,
+        rgba(255,255,255,0.2) 0%,
+        rgba(255,255,255,0.1) 50%,
+        transparent 70%
+    );
+    border-radius: 50%;
+}
+
+/* Animation for card shine */
+@keyframes cardShine {
+    0% {
+        background-position: -100% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+.membership-card {
+    animation: cardShine 3s linear infinite;
+}
+
+/* Add a subtle border */
+.membership-card {
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+/* Security circle */
+.membership-card::after {
+    content: '';
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    background: radial-gradient(
+        circle at center,
+        rgba(255,255,255,0.1) 0%,
+        rgba(255,255,255,0.05) 50%,
+        transparent 70%
+    );
+    border-radius: 50%;
+}
+
+/* Responsive Design */
+@media (max-width: 968px) {
+    .membership-content {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .membership-card {
+        width: 350px;
+        height: 220px;
+        margin-top: 2rem;
+    }
+
+    .card-number {
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 576px) {
+    .membership-card {
+        width: 300px;
+        height: 190px;
+        padding: 20px;
+    }
+
+    .card-logo {
+        font-size: 20px;
+    }
+
+    .card-number {
+        font-size: 16px;
+    }
+
+    .name, .date {
+        font-size: 14px;
+    }
+}
+
+/* Animation */
+@keyframes cardShine {
+    0% {
+        background-position: -100% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+.membership-card {
+    animation: cardShine 3s linear infinite;
+}
+
+.buy-now-btn {
+    background: linear-gradient(135deg, #966F33, #C4A484);  /* Brown gradient to match card */
+    color: white;
+    border: none;
+    padding: 1rem 2.5rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    position: relative;
+    overflow: hidden;
+    text-decoration: none;
+    display: inline-block;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Hover effect */
+.buy-now-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(150, 111, 51, 0.4);
+    background: linear-gradient(135deg, #C4A484, #DEB887);
+}
+
+/* Click effect */
+.buy-now-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 10px rgba(150, 111, 51, 0.3);
+}
+
+/* Add shine effect */
+.buy-now-btn::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        transparent,
+        rgba(255, 255, 255, 0.1),
+        transparent
+    );
+    transform: rotate(45deg);
+    transition: 0.5s;
+    opacity: 0;
+}
+
+.buy-now-btn:hover::after {
+    opacity: 1;
+    left: 100%;
+}
+
+/* Remove underline from link */
+.buy-now-link {
+    text-decoration: none;
+    display: inline-block;
+}
+
+.continue-shopping-btn {
+    background: linear-gradient(135deg, #C4A484, #DEB887);
+    color: white;
+    border: none;
+    /* Reduced padding and font size for smaller button */
+    padding: 0.7rem 1.8rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    position: relative;
+    overflow: hidden;
+    text-decoration: none;
+    display: inline-block;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    /* Remove margin since we'll center it with the container */
+    margin: 0;
+}
+
+/* Container to center the button */
+.shopping-actions {
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center;     /* Center vertically */
+    padding: 1rem;
+    width: 100%;
+    text-align: center;
+}
+
+/* Maintain hover and other effects */
+.continue-shopping-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(150, 111, 51, 0.4);
+    background: linear-gradient(135deg, #DEB887, #E6CCB2);
+}
+
+.continue-shopping-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 10px rgba(150, 111, 51, 0.3);
+}
+
+.continue-shopping-btn::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        transparent,
+        rgba(255, 255, 255, 0.1),
+        transparent
+    );
+    transform: rotate(45deg);
+    transition: 0.5s;
+    opacity: 0;
+}
+
+.continue-shopping-btn:hover::after {
+    opacity: 1;
+    left: 100%;
+}
+
+/* Remove underline from link */
+.continue-shopping-link {
+    text-decoration: none;
+    display: inline-block;
+    width: 100%; /* Added to make link take full width */
+    text-align: center; /* Center the link */
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .continue-shopping-btn {
+        /* Even smaller on mobile */
+        padding: 0.6rem 1.5rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* Container styling for button placement - centered */
+.shopping-actions {
+    display: flex;
+    justify-content: center; /* Changed to center */
+    align-items: center;
+    padding: 1rem;
+    gap: 1rem;
+    text-align: center; /* Added to ensure content is centered */
+}
+
+@media (max-width: 768px) {
+    .shopping-actions {
+        flex-direction: column;
+    }
+    
+    .continue-shopping-btn {
+        width: 100%;
+        text-align: center;
+        margin: 0.5rem auto; /* Changed to auto margins */
+    }
+}
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-top">
+                <div class="logo">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                    </svg>
+                    <span>Literadia</span>
+                </div>
+                
+                <div class="search-container">
+                    <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                    </svg>
+                    <input type="text" id="search-input" placeholder="Search books, authors, categories...">
+                </div>
+                
+                <div class="user-controls">
+                    <button class="cart-btn" id="cart-button">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/>
+                        </svg>
+                        <span class="cart-count" id="cart-count">0</span>
+                    </button>
+                    
+                    <button class="user-btn">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+    </header>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Welcome to Literadia</h1>
+            <p>Your one-stop destination for books and library services</p>
+            <!-- Update the href to match the books section ID -->
+            <a href="#books-section" class="btn btn-primary" id="explore-btn">Explore Books</a>
+        </div>
+    </section>
+
+    <section class="membership-banner">
+        <div class="membership-content">
+            <div class="membership-info">
+                <h2>Premium Membership</h2>
+                <div class="membership-features">
+                    <div class="feature-item">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        <span>Unlimited access to all e-books</span>
+                    </div>
+                    <div class="feature-item">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        <span>Priority book reservations</span>
+                    </div>
+                    <div class="feature-item">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        <span>Access for 30 days</span>
+                    </div>
+                </div>
+                <div class="membership-price">
+                    <span class="price">Rp 10.000</span>
+                    <span class="period">/month</span>
+                </div>
+                <a href="http://lynk.id/literadia/pkgkj2701076/checkout" class="buy-now-link"><button class="buy-now-btn">Buy Now</button></a>
+            </div>
+            <div class="membership-card-container">
+                <div class="membership-card">
+                    <div class="card-header">
+                        <div class="card-logo">
+                            <span class="logo-text">LITERADIA</span>
+                        </div>
+                        <div class="card-chip"></div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-number">
+                            <span>4921</span>
+                            <span>8293</span>
+                            <span>7651</span>
+                            <span>9012</span>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="card-holder">
+                            <span class="label">CARD HOLDER</span>
+                            <span class="name">PREMIUM MEMBER</span>
+                        </div>
+                        <div class="card-expires">
+                            <span class="label">VALID THRU</span>
+                            <span class="date">05/28</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="icon-section">
+        <!-- Physical Book Icon -->
+        <a href="/physical-books" class="icon-link">
+          <div class="icon-container">
+            <div class="icon physical-book">
+              <div class="book-pages"></div>
+              <div class="book-cover">
+                <div class="book-lines"></div>
+                <div class="book-sparkle">✦</div>
+              </div>
+            </div>
+            <div class="icon-name">Physical Book</div>
+          </div>
+        </a>
+
+        <!-- E-Book Icon -->
+        <a href="/ebooks" class="icon-link">
+            <div class="icon-container">
+              <div class="icon">
+                <div class="ebook glow">
+                  <div class="ebook-screen">
+                    <div class="ebook-text"></div>
+                    <div class="ebook-letter">A</div>
+                  </div>
+                </div>
+              </div>
+              <div class="icon-name">E-Book</div>
+            </div>
+          </a>
+        </div>
+        
+    
+    <main class="container">
+        <!-- Add an ID to the books section -->
+        <section id="books-section">
+            <h2 class="section-title">Books Collection</h2>
+            <div class="book-container" id="featured-books">
+                <!-- Books will be added dynamically -->
+            </div>
+        </section>
+    </main>
+
+    <h2 class="section-title">Features</h2>
+        <div class="features">
+            <div class="feature">
+                <svg viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm4.59-12.42L10 14.17l-2.59-2.58L6 13l4 4 8-8z"/>
+                </svg>
+                <h3>Free Shipping</h3>
+                <p>Free shipping on all orders</p>
+            </div>
+            
+            <div class="feature">
+                <svg viewBox="0 0 24 24">
+                    <path d="M16.5 3c-1.74 0-3.41.81-4.5 2.09C10.91 3.81 9.24 3 7.5 3 4.42 3 2 5.42 2 8.5c0 3.78 3.4 6.86 8.55 11.54L12 21.35l1.45-1.32C18.6 15.36 22 12.28 22 8.5 22 5.42 19.58 3 16.5 3zm-4.4 15.55l-.1.1-.1-.1C7.14 14.24 4 11.39 4 8.5 4 6.5 5.5 5 7.5 5c1.54 0 3.04.99 3.57 2.36h1.87C13.46 5.99 14.96 5 16.5 5c2 0 3.5 1.5 3.5 3.5 0 2.89-3.14 5.74-7.9 10.05z"/>
+                </svg>
+                <h3>Library Membership</h3>
+                <p>Access thousands of e-books with our premium membership</p>
+            </div>
+            
+            <div class="feature">
+                <svg viewBox="0 0 24 24">
+                    <path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/>
+                </svg>
+                <h3>Best Prices</h3>
+                <p>Competitive prices on over 100,000 titles</p>
+            </div>
+         </div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>About Us</h3>
+                    <p>Literadia is a modern library and bookstore dedicated to promoting reading culture and providing access to knowledge for everyone.</p>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#">Books</a></li>
+                        <li><a href="#">Membership</a></li>
+                    </ul>
+                </div>
+                
+                
+                <div class="footer-column">
+                    <h3>Contact Info</h3>
+                    <ul>
+                        <li>123 Book Street, Reading City</li>
+                        <li>Phone: +62 823-8205-2250</li>
+                        <li>Email: literadia1@gmail.com</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>&copy; 2025 Literadia Library & Bookstore. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Cart Modal -->
+    <div class="modal" id="cart-modal">
+        <div class="modal-content">
+            <span class="close-btn" id="close-cart">&times;</span>
+            <h2>Your Shopping Cart</h2>
+            <div id="cart-items">
+                <!-- Cart items will be added here dynamically -->
+            </div>
+            <div class="cart-summary" id="cart-summary">
+                <!-- Cart summary will be added here dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Book data
+const books = [
+    {
+        id: 1,
+        title: "The Silent Echo",
+        author: "Amelia Johnson",
+        price: 24.99,
+        category: "Fiction",
+        image: "/api/placeholder/200/300",
+        description: "A thrilling mystery novel about a detective solving a cold case.",
+        inStock: true
+    },
+    {
+        id: 2,
+        title: "Data Science Fundamentals",
+        author: "Robert Chen",
+        price: 39.99,
+        category: "Technical",
+        image: "/api/placeholder/200/300",
+        description: "An in-depth guide to data science principles and applications.",
+        inStock: true
+    },
+    {
+        id: 3,
+        title: "Cooking Masterclass",
+        author: "Maria Rodriguez",
+        price: 29.50,
+        category: "Cooking",
+        image: "/api/placeholder/200/300",
+        description: "Learn to cook like a professional chef with this comprehensive guide.",
+        inStock: true
+    },
+    {
+        id: 4,
+        title: "History of Ancient Civilizations",
+        author: "Dr. James Moore",
+        price: 45.00,
+        category: "History",
+        image: "/api/placeholder/200/300",
+        description: "An exploration of ancient civilizations and their impact on modern society.",
+        inStock: true
+    },
+    {
+        id: 5,
+        title: "Financial Freedom",
+        author: "Sarah Williams",
+        price: 19.95,
+        category: "Finance",
+        image: "/api/placeholder/200/300",
+        description: "A step-by-step guide to achieving financial independence.",
+        inStock: true
+    },
+    {
+        id: 6,
+        title: "Midnight in the Garden",
+        author: "Thomas Black",
+        price: 22.50,
+        category: "Fiction",
+        image: "/api/placeholder/200/300",
+        description: "A haunting tale of mystery and intrigue set in a small southern town.",
+        inStock: true
+    },
+    {
+        id: 7,
+        title: "Quantum Physics Explained",
+        author: "Dr. Lisa Wong",
+        price: 49.99,
+        category: "Science",
+        image: "/api/placeholder/200/300",
+        description: "A simplified explanation of complex quantum physics concepts.",
+        inStock: true
+    },
+    {
+        id: 8,
+        title: "The Art of Mindfulness",
+        author: "Michael Reed",
+        price: 18.99,
+        category: "Self-Help",
+        image: "/api/placeholder/200/300",
+        description: "Learn how to practice mindfulness in your everyday life.",
+        inStock: true
+    }
+];
+
+// Cart functionality
+let cart = [];
+
+// DOM Elements
+const featuredBooksContainer = document.getElementById('featured-books');
+const cartModal = document.getElementById('cart-modal');
+const closeCartBtn = document.getElementById('close-cart');
+const cartButton = document.getElementById('cart-button');
+const cartItemsContainer = document.getElementById('cart-items');
+const cartSummary = document.getElementById('cart-summary');
+const cartCountElement = document.getElementById('cart-count');
+const searchInput = document.getElementById('search-input');
+
+// Display books
+function displayBooks(booksArray) {
+    featuredBooksContainer.innerHTML = '';
+    
+    booksArray.forEach(book => {
+        const bookCard = document.createElement('div');
+        bookCard.classList.add('book-card');
+        
+        bookCard.innerHTML = `
+            <img src="${book.image}" alt="${book.title}" class="book-img">
+            <div class="book-details">
+                <h3 class="book-title">${book.title}</h3>
+                <p class="book-author">by ${book.author}</p>
+                <p class="book-price">$${book.price.toFixed(2)}</p>
+                <button class="add-to-cart" data-id="${book.id}" ${!book.inStock ? 'disabled' : ''}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="9" cy="21" r="1"></circle>
+    <circle cx="20" cy="21" r="1"></circle>
+    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+</svg>
+                    ${book.inStock ? 'Add to Cart' : 'Out of Stock'}
+                </button>
+            </div>
+        `;
+        
+        featuredBooksContainer.appendChild(bookCard);
+    });
+    
+    // Add event listeners to "Add to Cart" buttons
+    const addToCartButtons = featuredBooksContainer.querySelectorAll('.add-to-cart');
+    addToCartButtons.forEach(button => {
+        if (!button.disabled) {
+            button.addEventListener('click', function() {
+                const bookId = parseInt(this.getAttribute('data-id'));
+                addToCart(bookId);
+            });
+        }
+    });
+}
+
+// Search functionality
+function setupSearch() {
+    searchInput.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        
+        if (searchTerm.length > 0) {
+            const filteredBooks = books.filter(book => 
+                book.title.toLowerCase().includes(searchTerm) || 
+                book.author.toLowerCase().includes(searchTerm) || 
+                book.category.toLowerCase().includes(searchTerm)
+            );
+            
+            displayBooks(filteredBooks);
+            
+            // Update section title
+            const sectionTitle = document.querySelector('.section-title');
+            sectionTitle.textContent = `Search Results for "${searchTerm}"`;
+        } else {
+            displayBooks(books);
+            // Reset section title
+            const sectionTitle = document.querySelector('.section-title');
+            sectionTitle.textContent = 'Books Collection';
+        }
+    });
+}
+
+// Cart functions
+function addToCart(bookId) {
+    const book = books.find(b => b.id === bookId);
+    
+    if (book) {
+        const existingItem = cart.find(item => item.id === bookId);
+        
+        if (existingItem) {
+            existingItem.quantity += 1;
+        } else {
+            cart.push({
+                ...book,
+                quantity: 1
+            });
+        }
+        
+        updateCartCount();
+        showNotification(`${book.title} added to cart!`);
+        saveCart();
+    }
+}
+
+function updateCartCount() {
+    const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+    cartCountElement.textContent = totalItems;
+}
+
+function saveCart() {
+    localStorage.setItem('pustakaCart', JSON.stringify(cart));
+}
+
+function loadCart() {
+    const savedCart = localStorage.getItem('pustakaCart');
+    if (savedCart) {
+        cart = JSON.parse(savedCart);
+        updateCartCount();
+    }
+}
+
+function displayCartItems() {
+    if (cart.length === 0) {
+        cartItemsContainer.innerHTML = `
+            <div class="empty-cart">
+                <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <path d="M16 10a4 4 0 0 1-8 0"></path>
+                </svg>
+                <p>Your cart is empty.</p>
+                <div class="shopping-actions">
+    <a href="/books" class="continue-shopping-link">
+        <button class="continue-shopping-btn">
+            Continue Shopping
+        </button>
+    </a>
+</div>
+            </div>
+        `;
+        cartSummary.innerHTML = '';
+        return;
+    }
+
+    cartItemsContainer.innerHTML = cart.map(item => `
+        <div class="cart-item">
+            <img src="${item.image}" alt="${item.title}" class="cart-item-img">
+            <div class="cart-item-details">
+                <h4 class="cart-item-title">${item.title}</h4>
+                <p class="cart-item-price">$${item.price.toFixed(2)}</p>
+                <div class="cart-item-quantity">
+                    <button class="quantity-btn" onclick="changeQuantity(${item.id}, -1)">-</button>
+                    <input type="number" value="${item.quantity}" min="1" 
+                           onchange="updateQuantity(${item.id}, this.value)">
+                    <button class="quantity-btn" onclick="changeQuantity(${item.id}, 1)">+</button>
+                    <button class="cart-item-remove" onclick="removeFromCart(${item.id})">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                        </svg>
+                        Remove
+                    </button>
+                </div>
+            </div>
+        </div>
+    `).join('');
+
+    updateCartSummary();
+}
+
+function updateCartSummary() {
+    const subtotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+    const total = subtotal;
+
+    cartSummary.innerHTML = `
+        <div class="cart-total">
+            <p>Subtotal: $${subtotal.toFixed(2)}</p>
+            <p>Total: $${total.toFixed(2)}</p>
+        </div>
+        <button class="checkout-btn" onclick="checkout()">Proceed to Checkout</button>
+    `;
+}
+
+function changeQuantity(itemId, amount) {
+    const item = cart.find(item => item.id === itemId);
+    if (item) {
+        const newQuantity = item.quantity + amount;
+        if (newQuantity > 0) {
+            item.quantity = newQuantity;
+            updateCartCount();
+            displayCartItems();
+            saveCart();
+        } else {
+            removeFromCart(itemId);
+        }
+    }
+}
+
+function updateQuantity(itemId, newQuantity) {
+    const quantity = parseInt(newQuantity);
+    if (quantity > 0) {
+        const item = cart.find(item => item.id === itemId);
+        if (item) {
+            item.quantity = quantity;
+            updateCartCount();
+            displayCartItems();
+            saveCart();
+        }
+    }
+}
+
+function removeFromCart(itemId) {
+    cart = cart.filter(item => item.id !== itemId);
+    updateCartCount();
+    displayCartItems();
+    saveCart();
+}
+
+function checkout() {
+    alert('Thank you for your purchase!');
+    cart = [];
+    updateCartCount();
+    saveCart();
+    cartModal.style.display = 'none';
+}
+
+// Initialize
+function init() {
+    displayBooks(books);
+    loadCart();
+    setupSearch();
+    
+    // Cart modal events
+    cartButton.addEventListener('click', () => {
+        cartModal.style.display = 'block';
+        displayCartItems();
+    });
+    
+    closeCartBtn.addEventListener('click', () => {
+        cartModal.style.display = 'none';
+    });
+    
+    window.addEventListener('click', (e) => {
+        if (e.target === cartModal) {
+            cartModal.style.display = 'none';
+        }
+    });
+}
+
+// Run initialization
+document.addEventListener('DOMContentLoaded', init);
+
+// Add this to your existing JavaScript code
+document.addEventListener('DOMContentLoaded', function() {
+    const exploreBtn = document.getElementById('explore-btn');
+    
+    exploreBtn.addEventListener('click', function(e) {
+        e.preventDefault(); // Prevent default anchor behavior
+        
+        const booksSection = document.getElementById('books-section');
+        
+        // Smooth scroll to books section
+        booksSection.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+        });
+    });
+});
+        // Add these functions to your existing JavaScript code
+
+// Function to handle when user is leaving the page
+window.addEventListener('beforeunload', function(e) {
+    // Save cart data before user leaves
+    saveCart();
+});
+
+// Enhanced save cart function with timestamp
+function saveCart() {
+    const cartData = {
+        items: cart,
+        timestamp: new Date().getTime(),
+    };
+    localStorage.setItem('pustakaCart', JSON.stringify(cartData));
+}
+
+// Enhanced load cart function with timestamp check
+function loadCart() {
+    const savedCartData = localStorage.getItem('pustakaCart');
+    if (savedCartData) {
+        const parsedData = JSON.parse(savedCartData);
+        
+        // Check if the cart data is still valid (within 30 days)
+        const thirtyDaysInMs = 30 * 24 * 60 * 60 * 1000;
+        const currentTime = new Date().getTime();
+        
+        if (currentTime - parsedData.timestamp < thirtyDaysInMs) {
+            cart = parsedData.items;
+            updateCartCount();
+        } else {
+            // Clear expired cart data
+            localStorage.removeItem('pustakaCart');
+            cart = [];
+        }
+    }
+}
+
+// Enhanced checkout function
+function checkout() {
+    alert('Thank you for your purchase!');
+    cart = [];
+    updateCartCount();
+    // Clear cart data from localStorage after successful checkout
+    localStorage.removeItem('pustakaCart');
+    cartModal.style.display = 'none';
+}
+
+// Add auto-save functionality to all cart modification functions
+function addToCart(bookId) {
+    const book = books.find(b => b.id === bookId);
+    
+    if (book) {
+        const existingItem = cart.find(item => item.id === bookId);
+        
+        if (existingItem) {
+            existingItem.quantity += 1;
+        } else {
+            cart.push({
+                ...book,
+                quantity: 1
+            });
+        }
+        
+        updateCartCount();
+        showNotification(`${book.title} added to cart!`);
+        saveCart(); // Auto-save
+    }
+}
+
+function changeQuantity(itemId, amount) {
+    const item = cart.find(item => item.id === itemId);
+    if (item) {
+        const newQuantity = item.quantity + amount;
+        if (newQuantity > 0) {
+            item.quantity = newQuantity;
+            updateCartCount();
+            displayCartItems();
+            saveCart(); // Auto-save
+        } else {
+            removeFromCart(itemId);
+        }
+    }
+}
+
+function updateQuantity(itemId, newQuantity) {
+    const quantity = parseInt(newQuantity);
+    if (quantity > 0) {
+        const item = cart.find(item => item.id === itemId);
+        if (item) {
+            item.quantity = quantity;
+            updateCartCount();
+            displayCartItems();
+            saveCart(); // Auto-save
+        }
+    }
+}
+
+function removeFromCart(itemId) {
+    cart = cart.filter(item => item.id !== itemId);
+    updateCartCount();
+    displayCartItems();
+    saveCart(); // Auto-save
+}
+
+// Add periodic auto-save (every 30 seconds)
+setInterval(saveCart, 30000);
+
+// Initialize with stored data
+document.addEventListener('DOMContentLoaded', function() {
+    loadCart();
+    // ... rest of your initialization code
+});
+
+document.querySelector('.membership-card').addEventListener('mousemove', function(e) {
+    const card = this;
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    
+    const rotateX = (y - centerY) / 10;
+    const rotateY = -(x - centerX) / 10;
+    
+    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+});
+
+document.querySelector('.membership-card').addEventListener('mouseleave', function() {
+    this.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)';
+});
+
+// Add shine effect on hover
+document.querySelector('.membership-card').addEventListener('mouseenter', function() {
+    this.style.backgroundPosition = '200%';
+});
+
+    </script>
+    </body>
+</html>
