@@ -1,352 +1,539 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checkout - Literadia</title>
-    <style>
-        :root {
-            --primary: #D4A373;
-            --secondary: #CCD5AE;
-            --accent: #E9EDC9;
-            --light: #FEFAE0;
-            --dark: #463F3A;
-            --success: #27ae60;
-            --error: #c0392b;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background-color: white;
-            color: var(--dark);
-            line-height: 1.6;
-            min-height: 100vh;
-        }
-
-        .checkout-container {
-            max-width: 100%;
-            padding: 2rem 4rem;
-            position: relative;
-        }
-
-        .back-button {
-            position: absolute;
-            top: 2.5rem;
-            left: 4rem;
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 0.5rem;
-            transition: transform 0.3s ease;
-            z-index: 10;
-        }
-
-        .back-button svg {
-            width: 32px;
-            height: 32px;
-            stroke: var(--primary);
-            transition: stroke 0.3s ease;
-        }
-
-        .back-button:hover {
-            transform: translateX(-5px);
-        }
-
-        .back-button:hover svg {
-            stroke: var(--secondary);
-        }
-
-        .checkout-header {
-            text-align: center;
-            margin: 3rem 0;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid var(--accent);
-        }
-
-        .checkout-header h1 {
-            color: var(--primary);
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .checkout-header p {
-            color: var(--dark);
-            opacity: 0.8;
-        }
-
-        .form-content {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            color: var(--dark);
-        }
-
-        .form-group input,
-        .form-group textarea {
-            width: 100%;
-            padding: 0.8rem;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .form-group input:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(212, 163, 115, 0.1);
-        }
-
-        .address-fields {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1rem;
-        }
-
-        .submit-btn {
-            width: 100%;
-            padding: 1rem;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 1rem;
-        }
-
-        .submit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(212, 163, 115, 0.3);
-        }
-
-        .submit-btn:active {
-            transform: translateY(0);
-        }
-
-        .error-message {
-            color: var(--error);
-            font-size: 0.85rem;
-            margin-top: 0.3rem;
-            display: none;
-        }
-
-        .success-message {
-            display: none;
-            background-color: var(--success);
-            color: white;
-            padding: 1rem;
-            border-radius: 8px;
-            text-align: center;
-            margin-top: 1rem;
-            animation: slideIn 0.5s ease;
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateY(-20px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .checkout-container {
-                padding: 1rem 2rem;
-            }
-
-            .back-button {
-                top: 1.5rem;
-                left: 2rem;
-            }
-
-            .address-fields {
-                grid-template-columns: 1fr;
-            }
-
-            .checkout-header h1 {
-                font-size: 2rem;
-            }
-
-            .checkout-header {
-                margin: 2rem 0;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Checkout - Literadia</title>
+  <style>
+    :root {
+      --primary: #D4A373;
+      --secondary: #CCD5AE;
+      --accent: #E9EDC9;
+      --light: #FEFAE0;
+      --dark: #463F3A;
+      --success: #27ae60;
+      --error: #c0392b;
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    body {
+      background-color: white;
+      color: var(--dark);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    .checkout-container {
+      max-width: 100%;
+      padding: 2rem 4rem;
+      position: relative;
+    }
+    .back-button {
+      position: absolute;
+      top: 2.5rem;
+      left: 4rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0.5rem;
+      transition: transform 0.3s ease;
+      z-index: 10;
+    }
+    .back-button svg {
+      width: 32px;
+      height: 32px;
+      stroke: var(--primary);
+      transition: stroke 0.3s ease;
+    }
+    .back-button:hover {
+      transform: translateX(-5px);
+    }
+    .back-button:hover svg {
+      stroke: var(--secondary);
+    }
+    .checkout-header {
+      text-align: center;
+      margin: 3rem 0;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid var(--accent);
+    }
+    .checkout-header h1 {
+      color: var(--primary);
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .checkout-header p {
+      color: var(--dark);
+      opacity: 0.8;
+    }
+    .form-content {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: var(--dark);
+    }
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.8rem;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(212, 163, 115, 0.1);
+    }
+    .address-fields {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+    .submit-btn {
+      width: 100%;
+      padding: 1rem;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 1rem;
+    }
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(212, 163, 115, 0.3);
+    }
+    .submit-btn:active {
+      transform: translateY(0);
+    }
+    .error-message {
+      color: var(--error);
+      font-size: 0.85rem;
+      margin-top: 0.3rem;
+      display: none;
+    }
+    .success-message {
+      display: none;
+      background-color: var(--success);
+      color: white;
+      padding: 1rem;
+      border-radius: 8px;
+      text-align: center;
+      margin-top: 1rem;
+      animation: slideIn 0.5s ease;
+    }
+    .receipt-container {
+      display: none;
+      max-width: 600px;
+      margin: 2rem auto;
+      padding: 2rem;
+      border: 1px solid var(--accent);
+      border-radius: 8px;
+      background-color: #fff;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    .receipt-header {
+      text-align: center;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--accent);
+    }
+    .receipt-details {
+      margin-top: 1.5rem;
+    }
+    .receipt-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+    }
+    .receipt-row strong {
+      color: var(--primary);
+    }
+    .receipt-footer {
+      margin-top: 1.5rem;
+      text-align: center;
+      padding-top: 1rem;
+      border-top: 1px solid var(--accent);
+      font-style: italic;
+    }
+    .print-btn {
+      background-color: var(--secondary);
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      margin-top: 1rem;
+      cursor: pointer;
+    }
+    @keyframes slideIn {
+      from {
+        transform: translateY(-20px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+    @media (max-width: 768px) {
+      .checkout-container {
+        padding: 1rem 2rem;
+      }
+      .back-button {
+        top: 1.5rem;
+        left: 2rem;
+      }
+      .address-fields {
+        grid-template-columns: 1fr;
+      }
+      .checkout-header h1 {
+        font-size: 2rem;
+      }
+      .checkout-header {
+        margin: 2rem 0;
+      }
+    }
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 1rem;
+    }
+    .spinner {
+      border: 5px solid #f3f3f3;
+      border-top: 5px solid var(--primary);
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
 </head>
 <body>
-    <div class="checkout-container">
-        <button onclick="history.back()" class="back-button">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M19 12H5"/>
-                <polyline points="12 19 5 12 12 5"/>
-            </svg>
-        </button>
+  <div class="checkout-container">
+    <button onclick="history.back()" class="back-button">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path d="M19 12H5"/>
+        <polyline points="12 19 5 12 12 5"/>
+      </svg>
+    </button>
 
-        <div class="checkout-header">
-            <h1>Checkout</h1>
-            <p>Please fill in your delivery information</p>
-        </div>
-
-        <div class="form-content">
-            <form id="checkoutForm">
-                <div class="form-group">
-                    <label for="name">Full Name *</label>
-                    <input type="text" id="name" name="name" required>
-                    <span class="error-message" id="nameError">Please enter your full name</span>
-                </div>
-
-                <div class="form-group">
-                    <label for="email">Email Address *</label>
-                    <input type="email" id="email" name="email" required>
-                    <span class="error-message" id="emailError">Please enter a valid email address</span>
-                </div>
-
-                <div class="form-group">
-                    <label for="phone">Phone Number *</label>
-                    <input type="tel" id="phone" name="phone" required>
-                    <span class="error-message" id="phoneError">Please enter a valid phone number</span>
-                </div>
-
-                <div class="form-group">
-                    <label for="address">Street Address *</label>
-                    <textarea id="address" name="address" rows="2" required></textarea>
-                    <span class="error-message" id="addressError">Please enter your street address</span>
-                </div>
-
-                <div class="address-fields">
-                    <div class="form-group">
-                        <label for="city">City *</label>
-                        <input type="text" id="city" name="city" required>
-                        <span class="error-message" id="cityError">Please enter your city</span>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="state">State/Province *</label>
-                        <input type="text" id="state" name="state" required>
-                        <span class="error-message" id="stateError">Please enter your state</span>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="zipCode">ZIP/Postal Code *</label>
-                        <input type="text" id="zipCode" name="zipCode" required>
-                        <span class="error-message" id="zipError">Please enter your ZIP code</span>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="country">Country *</label>
-                        <input type="text" id="country" name="country" required>
-                        <span class="error-message" id="countryError">Please enter your country</span>
-                    </div>
-                </div>
-
-                <button type="submit" class="submit-btn">Complete Order</button>
-            </form>
-
-            <div class="success-message" id="successMessage">
-                Thank you for your order! We'll send you a confirmation email shortly.
-            </div>
-        </div>
+    <div class="checkout-header">
+      <h1>Checkout</h1>
+      <p>Please fill in your delivery information</p>
     </div>
 
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-    <script>
-        // Initialize EmailJS
-        (function() {
-            emailjs.init("YOUR_PUBLIC_KEY");
-        })();
+    <div class="form-content">
+      <form id="checkoutForm">
+        <div class="form-group">
+          <label for="name">Full Name *</label>
+          <input type="text" id="name" name="name" required>
+          <span class="error-message" id="nameError">Please enter your full name</span>
+        </div>
+        <div class="form-group">
+          <label for="email">Email Address *</label>
+          <input type="email" id="email" name="email" required>
+          <span class="error-message" id="emailError">Please enter a valid email address</span>
+        </div>
+        <div class="form-group">
+          <label for="phone">Phone Number *</label>
+          <input type="tel" id="phone" name="phone" required>
+          <span class="error-message" id="phoneError">Please enter a valid phone number</span>
+        </div>
+        <div class="form-group">
+          <label for="address">Street Address *</label>
+          <textarea id="address" name="address" rows="2" required></textarea>
+          <span class="error-message" id="addressError">Please enter your street address</span>
+        </div>
 
-        document.getElementById('checkoutForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+        <div class="address-fields">
+          <div class="form-group">
+            <label for="city">City *</label>
+            <input type="text" id="city" name="city" required>
+            <span class="error-message" id="cityError">Please enter your city</span>
+          </div>
+          <div class="form-group">
+            <label for="state">State/Province *</label>
+            <input type="text" id="state" name="state" required>
+            <span class="error-message" id="stateError">Please enter your state</span>
+          </div>
+          <div class="form-group">
+            <label for="zipCode">ZIP/Postal Code *</label>
+            <input type="text" id="zipCode" name="zipCode" required>
+            <span class="error-message" id="zipError">Please enter your ZIP code</span>
+          </div>
+          <div class="form-group">
+            <label for="country">Country *</label>
+            <input type="text" id="country" name="country" required>
+            <span class="error-message" id="countryError">Please enter your country</span>
+          </div>
+        </div>
 
-            // Form validation
-            const name = document.getElementById('name').value.trim();
-            const email = document.getElementById('email').value.trim();
-            const phone = document.getElementById('phone').value.trim();
-            const address = document.getElementById('address').value.trim();
-            const city = document.getElementById('city').value.trim();
-            const state = document.getElementById('state').value.trim();
-            const zipCode = document.getElementById('zipCode').value.trim();
-            const country = document.getElementById('country').value.trim();
-            
-            let isValid = true;
+        <button type="submit" class="submit-btn">Complete Order</button>
+      </form>
 
-            // Reset error messages
-            document.querySelectorAll('.error-message').forEach(msg => msg.style.display = 'none');
+      <div class="loading" id="loadingIndicator">
+        <div class="spinner"></div>
+        <p>Processing your order...</p>
+      </div>
 
-            // Validation checks
-            if (name.length < 2) {
-                document.getElementById('nameError').style.display = 'block';
-                isValid = false;
+      <div class="success-message" id="successMessage">
+        Thank you for your order! We've sent a confirmation email to your inbox.
+      </div>
+
+      <div class="receipt-container" id="receiptContainer">
+        <div class="receipt-header">
+          <h2>Order Receipt</h2>
+          <p>Thank you for shopping with Literadia</p>
+          <p id="receiptDate"></p>
+        </div>
+        <div class="receipt-details" id="receiptDetails">
+          <!-- Will be filled by JavaScript -->
+        </div>
+        <div class="receipt-footer">
+          <p>We appreciate your business!</p>
+          <button class="print-btn" onclick="window.print()">Print Receipt</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <script>
+    // Menunggu dokumen selesai dimuat sebelum menjalankan script
+    document.addEventListener('DOMContentLoaded', function() {
+      // Initialize EmailJS dengan public key
+      emailjs.init("Jj6VxNE6KpanmWfht");
+      
+      // Generate nomor order acak untuk receipt
+      function generateOrderNumber() {
+        return 'ORD-' + Math.floor(100000 + Math.random() * 900000);
+      }
+      
+      // Format tanggal untuk receipt
+      function formatDate(date) {
+        return new Intl.DateTimeFormat('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        }).format(date);
+      }
+      
+      // Generate receipt HTML
+      function generateReceipt(formData) {
+        const orderNumber = generateOrderNumber();
+        const date = new Date();
+        
+        document.getElementById('receiptDate').textContent = formatDate(date);
+        
+        const receiptDetails = document.getElementById('receiptDetails');
+        receiptDetails.innerHTML = `
+          <div class="receipt-row">
+            <span>Order Number:</span>
+            <strong>${orderNumber}</strong>
+          </div>
+          <div class="receipt-row">
+            <span>Customer:</span>
+            <strong>${formData.name}</strong>
+          </div>
+          <div class="receipt-row">
+            <span>Email:</span>
+            <strong>${formData.email}</strong>
+          </div>
+          <div class="receipt-row">
+            <span>Phone:</span>
+            <strong>${formData.phone}</strong>
+          </div>
+          <div class="receipt-row">
+            <span>Shipping Address:</span>
+            <strong>${formData.address}, ${formData.city}, ${formData.state} ${formData.zipCode}, ${formData.country}</strong>
+          </div>
+        `;
+        
+        // Tambahkan nomor order ke form data untuk email
+        formData.orderNumber = orderNumber;
+        formData.orderDate = formatDate(date);
+        
+        return formData;
+      }
+      
+      // Fungsi untuk menampilkan pesan error
+      function showError(elementId, show) {
+        const element = document.getElementById(elementId);
+        if (element) {
+          element.style.display = show ? 'block' : 'none';
+        }
+      }
+      
+      // Fungsi untuk validasi nomor telepon lebih fleksibel
+      function validatePhone(phone) {
+        // Menghapus semua karakter non-digit
+        const digits = phone.replace(/\D/g, '');
+        // Validasi jumlah digit (minimal 7 digit)
+        return digits.length >= 7;
+      }
+      
+      // Fungsi untuk validasi email
+      function validateEmail(email) {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
+      }
+      
+      // Handler submit form
+      const checkoutForm = document.getElementById('checkoutForm');
+      if (checkoutForm) {
+        checkoutForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+
+          const name = document.getElementById('name').value.trim();
+          const email = document.getElementById('email').value.trim();
+          const phone = document.getElementById('phone').value.trim();
+          const address = document.getElementById('address').value.trim();
+          const city = document.getElementById('city').value.trim();
+          const state = document.getElementById('state').value.trim();
+          const zipCode = document.getElementById('zipCode').value.trim();
+          const country = document.getElementById('country').value.trim();
+
+          let isValid = true;
+          
+          // Reset semua pesan error
+          document.querySelectorAll('.error-message').forEach(msg => msg.style.display = 'none');
+
+          // Validasi form
+          if (name.length < 2) {
+            showError('nameError', true);
+            isValid = false;
+          }
+          
+          if (!validateEmail(email)) {
+            showError('emailError', true);
+            isValid = false;
+          }
+          
+          if (!validatePhone(phone)) {
+            showError('phoneError', true);
+            isValid = false;
+          }
+          
+          if (address.length < 5) {
+            showError('addressError', true);
+            isValid = false;
+          }
+          
+          if (city.length < 2) {
+            showError('cityError', true);
+            isValid = false;
+          }
+          
+          if (state.length < 2) {
+            showError('stateError', true);
+            isValid = false;
+          }
+          
+          if (zipCode.length < 3) {
+            showError('zipError', true);
+            isValid = false;
+          }
+          
+          if (country.length < 2) {
+            showError('countryError', true);
+            isValid = false;
+          }
+
+          if (isValid) {
+            try {
+              // Tampilkan loading indicator
+              document.getElementById('loadingIndicator').style.display = 'block';
+              
+              // Sembunyikan form
+              document.getElementById('checkoutForm').style.display = 'none';
+              
+              // Persiapkan data untuk dikirim
+              let formData = {
+                name: name,
+                email: email,
+                phone: phone,
+                address: address,
+                city: city,
+                state: state,
+                zipCode: zipCode,
+                country: country,
+                subject: "New Order from " + name,
+                to_email: "literadia1@gmail.com",
+                to_name: "Literadia Store",
+                from_name: name,
+                reply_to: email
+              };
+              
+              // Generate receipt dan tambahkan data
+              formData = generateReceipt(formData);
+
+              // Kirim email menggunakan EmailJS
+              emailjs.send("service_g9huhy2", "template_a58u3uw", formData)
+                .then(function(response) {
+                  console.log('SUCCESS!', response.status, response.text);
+                  
+                  // Sembunyikan loading indicator
+                  document.getElementById('loadingIndicator').style.display = 'none';
+                  
+                  // Tampilkan pesan sukses dan receipt
+                  document.getElementById('successMessage').style.display = 'block';
+                  document.getElementById('receiptContainer').style.display = 'block';
+                  
+                  // Scroll ke receipt
+                  document.getElementById('receiptContainer').scrollIntoView({
+                    behavior: 'smooth'
+                  });
+                })
+                .catch(function(error) {
+                  console.log('FAILED...', error);
+                  
+                  // Sembunyikan loading indicator
+                  document.getElementById('loadingIndicator').style.display = 'none';
+                  
+                  // Tampilkan form kembali
+                  document.getElementById('checkoutForm').style.display = 'block';
+                  
+                  alert('Terjadi kesalahan saat memproses pesanan Anda. Silakan coba lagi.');
+                });
+            } catch (err) {
+              console.error("Error dalam proses pengiriman:", err);
+              
+              // Sembunyikan loading indicator
+              document.getElementById('loadingIndicator').style.display = 'none';
+              
+              // Tampilkan form kembali
+              document.getElementById('checkoutForm').style.display = 'block';
+              
+              alert('Terjadi kesalahan dalam sistem. Silakan coba lagi nanti.');
             }
-
-            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-                document.getElementById('emailError').style.display = 'block';
-                isValid = false;
-            }
-
-            if (!/^\+?[\d\s-]{10,}$/.test(phone)) {
-                document.getElementById('phoneError').style.display = 'block';
-                isValid = false;
-            }
-
-            if (address.length < 5) {
-                document.getElementById('addressError').style.display = 'block';
-                isValid = false;
-            }
-
-            if (isValid) {
-                const formData = {
-                    to: 'literadia1@gmail.com',
-                    subject: 'New Order from ' + name,
-                    name,
-                    email,
-                    phone,
-                    address,
-                    city,
-                    state,
-                    zipCode,
-                    country
-                };
-
-                emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', formData)
-                    .then(function(response) {
-                        console.log('SUCCESS!', response.status, response.text);
-                        document.getElementById('successMessage').style.display = 'block';
-                        document.getElementById('checkoutForm').reset();
-                        
-                        // Hide success message after 5 seconds
-                        setTimeout(() => {
-                            document.getElementById('successMessage').style.display = 'none';
-                        }, 5000);
-                    })
-                    .catch(function(error) {
-                        console.log('FAILED...', error);
-                        alert('There was an error processing your order. Please try again.');
-                    });
-            }
+          }
         });
-    </script>
+      } else {
+        console.error("Form checkout tidak ditemukan!");
+      }
+    });
+  </script>
 </body>
 </html>
