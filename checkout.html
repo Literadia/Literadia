@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Literadia</title>
+    <style>
+        :root {
+            --primary: #D4A373;
+            --secondary: #CCD5AE;
+            --accent: #E9EDC9;
+            --light: #FEFAE0;
+            --dark: #463F3A;
+            --success: #27ae60;
+            --error: #c0392b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: white;
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .checkout-container {
+            max-width: 100%;
+            padding: 2rem 4rem;
+            position: relative;
+        }
+
+        .back-button {
+            position: absolute;
+            top: 2.5rem;
+            left: 4rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            transition: transform 0.3s ease;
+            z-index: 10;
+        }
+
+        .back-button svg {
+            width: 32px;
+            height: 32px;
+            stroke: var(--primary);
+            transition: stroke 0.3s ease;
+        }
+
+        .back-button:hover {
+            transform: translateX(-5px);
+        }
+
+        .back-button:hover svg {
+            stroke: var(--secondary);
+        }
+
+        .checkout-header {
+            text-align: center;
+            margin: 3rem 0;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--accent);
+        }
+
+        .checkout-header h1 {
+            color: var(--primary);
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .checkout-header p {
+            color: var(--dark);
+            opacity: 0.8;
+        }
+
+        .form-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(212, 163, 115, 0.1);
+        }
+
+        .address-fields {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(212, 163, 115, 0.3);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .error-message {
+            color: var(--error);
+            font-size: 0.85rem;
+            margin-top: 0.3rem;
+            display: none;
+        }
+
+        .success-message {
+            display: none;
+            background-color: var(--success);
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 1rem;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .checkout-container {
+                padding: 1rem 2rem;
+            }
+
+            .back-button {
+                top: 1.5rem;
+                left: 2rem;
+            }
+
+            .address-fields {
+                grid-template-columns: 1fr;
+            }
+
+            .checkout-header h1 {
+                font-size: 2rem;
+            }
+
+            .checkout-header {
+                margin: 2rem 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="checkout-container">
+        <button onclick="history.back()" class="back-button">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 12H5"/>
+                <polyline points="12 19 5 12 12 5"/>
+            </svg>
+        </button>
+
+        <div class="checkout-header">
+            <h1>Checkout</h1>
+            <p>Please fill in your delivery information</p>
+        </div>
+
+        <div class="form-content">
+            <form id="checkoutForm">
+                <div class="form-group">
+                    <label for="name">Full Name *</label>
+                    <input type="text" id="name" name="name" required>
+                    <span class="error-message" id="nameError">Please enter your full name</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address *</label>
+                    <input type="email" id="email" name="email" required>
+                    <span class="error-message" id="emailError">Please enter a valid email address</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Phone Number *</label>
+                    <input type="tel" id="phone" name="phone" required>
+                    <span class="error-message" id="phoneError">Please enter a valid phone number</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="address">Street Address *</label>
+                    <textarea id="address" name="address" rows="2" required></textarea>
+                    <span class="error-message" id="addressError">Please enter your street address</span>
+                </div>
+
+                <div class="address-fields">
+                    <div class="form-group">
+                        <label for="city">City *</label>
+                        <input type="text" id="city" name="city" required>
+                        <span class="error-message" id="cityError">Please enter your city</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="state">State/Province *</label>
+                        <input type="text" id="state" name="state" required>
+                        <span class="error-message" id="stateError">Please enter your state</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="zipCode">ZIP/Postal Code *</label>
+                        <input type="text" id="zipCode" name="zipCode" required>
+                        <span class="error-message" id="zipError">Please enter your ZIP code</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="country">Country *</label>
+                        <input type="text" id="country" name="country" required>
+                        <span class="error-message" id="countryError">Please enter your country</span>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn">Complete Order</button>
+            </form>
+
+            <div class="success-message" id="successMessage">
+                Thank you for your order! We'll send you a confirmation email shortly.
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script>
+        // Initialize EmailJS
+        (function() {
+            emailjs.init("YOUR_PUBLIC_KEY");
+        })();
+
+        document.getElementById('checkoutForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Form validation
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const address = document.getElementById('address').value.trim();
+            const city = document.getElementById('city').value.trim();
+            const state = document.getElementById('state').value.trim();
+            const zipCode = document.getElementById('zipCode').value.trim();
+            const country = document.getElementById('country').value.trim();
+            
+            let isValid = true;
+
+            // Reset error messages
+            document.querySelectorAll('.error-message').forEach(msg => msg.style.display = 'none');
+
+            // Validation checks
+            if (name.length < 2) {
+                document.getElementById('nameError').style.display = 'block';
+                isValid = false;
+            }
+
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                document.getElementById('emailError').style.display = 'block';
+                isValid = false;
+            }
+
+            if (!/^\+?[\d\s-]{10,}$/.test(phone)) {
+                document.getElementById('phoneError').style.display = 'block';
+                isValid = false;
+            }
+
+            if (address.length < 5) {
+                document.getElementById('addressError').style.display = 'block';
+                isValid = false;
+            }
+
+            if (isValid) {
+                const formData = {
+                    to: 'literadia1@gmail.com',
+                    subject: 'New Order from ' + name,
+                    name,
+                    email,
+                    phone,
+                    address,
+                    city,
+                    state,
+                    zipCode,
+                    country
+                };
+
+                emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', formData)
+                    .then(function(response) {
+                        console.log('SUCCESS!', response.status, response.text);
+                        document.getElementById('successMessage').style.display = 'block';
+                        document.getElementById('checkoutForm').reset();
+                        
+                        // Hide success message after 5 seconds
+                        setTimeout(() => {
+                            document.getElementById('successMessage').style.display = 'none';
+                        }, 5000);
+                    })
+                    .catch(function(error) {
+                        console.log('FAILED...', error);
+                        alert('There was an error processing your order. Please try again.');
+                    });
+            }
+        });
+    </script>
+</body>
+</html>
