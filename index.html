@@ -2169,24 +2169,9 @@ function addToCart(product) {
         quantity: 1, // atau jumlah yang dipilih user
         image: product.image // opsional
     };
-
-    // Cek apakah produk sudah ada di cart
-    const existingProductIndex = cart.findIndex(item => item.id === product.id);
-    
-    if (existingProductIndex !== -1) {
-        // Jika produk sudah ada, tambah quantity
-        cart[existingProductIndex].quantity += 1;
-    } else {
-        // Jika produk belum ada, tambahkan ke cart
-        cart.push(productToAdd);
-    }
-
     // Simpan kembali ke localStorage
     localStorage.setItem('literadiaCart', JSON.stringify(cart));
     
-    // Opsional: Tampilkan notifikasi
-    alert('Produk berhasil ditambahkan ke keranjang!');
-}
         
     </script>
     </body>
