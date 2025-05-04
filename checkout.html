@@ -446,374 +446,300 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
   <script>
-    // Wait for document to load before running script
-    document.addEventListener('DOMContentLoaded', function() {
-      // Initialize EmailJS with public key
-      emailjs.init("Jj6VxNE6KpanmWfht");
+          /**
+ * PERBAIKAN UNTUK HALAMAN CHECKOUT
+ * Tempelkan kode ini di bagian akhir file HTML checkout Anda, sebelum tag </body>
+ */
+
+<script>
+  // Fungsi untuk memastikan cart diambil dari localStorage dengan benar
+  document.addEventListener('DOMContentLoaded', function() {
+    // Ambil data cart dari localStorage
+    let cart;
+    try {
+      cart = JSON.parse(localStorage.getItem('literadiaCart'));
+      console.log("Data keranjang berhasil diambil:", cart);
       
-      // Ambil data cart hanya dari localStorage tanpa fallback data sampel
-      const cart = JSON.parse(localStorage.getItem('literadiaCart')) || [];
-      
-      // Function to calculate cart total
-      function calculateCartTotal() {
-        return cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+      // Periksa apakah cart valid dan bukan null/undefined
+      if (!cart || !Array.isArray(cart)) {
+        console.warn("Data keranjang tidak valid atau kosong, menginisialisasi array kosong");
+        cart = [];
+        localStorage.setItem('literadiaCart', JSON.stringify(cart));
       }
+    } catch (error) {
+      console.error("Error saat parsing data keranjang:", error);
+      cart = [];
+      localStorage.setItem('literadiaCart', JSON.stringify(cart));
+    }
+    
+    // Perbarui tampilan keranjang
+    refreshCartDisplay(cart);
+    
+    // Aktifkan atau nonaktifkan tombol checkout berdasarkan isi keranjang
+    toggleCheckoutButton(cart);
+  });
+  
+  // Fungsi untuk memperbarui tampilan keranjang
+  function refreshCartDisplay(cart) {
+    const cartItemsList = document.getElementById('cartItemsList');
+    const cartTotalAmount = document.getElementById('cartTotalAmount');
+    
+    if (!cartItemsList) {
+      console.error("Elemen cartItemsList tidak ditemukan!");
+      return;
+    }
+    
+    // Bersihkan konten sebelumnya
+    cartItemsList.innerHTML = '';
+    
+    if (!cart || cart.length === 0) {
+      // Tampilkan pesan jika keranjang kosong
+      const emptyCartMessage = document.createElement('div');
+      emptyCartMessage.className = 'empty-cart-message';
+      emptyCartMessage.innerHTML = 'Keranjang Anda kosong. Silakan tambahkan produk sebelum checkout.';
+      cartItemsList.appendChild(emptyCartMessage);
       
-      // Function to format currency
-      function formatCurrency(amount) {
-        return new Intl.NumberFormat('en-US', {
-          style: 'currency',
-          currency: 'USD'
-        }).format(amount);
+      if (cartTotalAmount) {
+        cartTotalAmount.textContent = formatCurrency(0);
       }
-      
-      // Populate cart items in the checkout page
-      function displayCartItems() {
-        const cartItemsList = document.getElementById('cartItemsList');
-        const cartTotal = document.getElementById('cartTotalAmount');
+    } else {
+      // Tambahkan setiap item ke tampilan
+      cart.forEach(item => {
+        const itemElement = document.createElement('div');
+        itemElement.className = 'cart-item';
         
-        if (cartItemsList) {
-          // Clear previous content
-          cartItemsList.innerHTML = '';
-          
-          if (cart.length === 0) {
-            // Tampilkan pesan jika keranjang kosong
-            const emptyCartMessage = document.createElement('div');
-            emptyCartMessage.className = 'empty-cart-message';
-            emptyCartMessage.innerHTML = 'Your cart is empty. Please add products before checkout.';
-            cartItemsList.appendChild(emptyCartMessage);
-          } else {
-            // Add each cart item
-            cart.forEach(item => {
-              const itemElement = document.createElement('div');
-              itemElement.className = 'cart-item';
-              itemElement.innerHTML = `
-                <span>${item.name}</span>
-                <span>${formatCurrency(item.price)}</span>
-                <span>${item.quantity}</span>
-                <span>${formatCurrency(item.price * item.quantity)}</span>
-              `;
-              cartItemsList.appendChild(itemElement);
-            });
-          }
-          
-          // Update total
-          if (cartTotal) {
-            cartTotal.textContent = formatCurrency(calculateCartTotal());
-          }
-        }
-      }
-      
-      // Call function to display cart items
-      displayCartItems();
-      
-      // Disable form submission if cart is empty
-      if (cart.length === 0) {
-        const submitBtn = document.querySelector('.submit-btn');
-        if (submitBtn) {
-          submitBtn.disabled = true;
-          submitBtn.style.opacity = '0.5';
-          submitBtn.textContent = 'Cart is empty';
-        }
-      }
-      
-      // Generate random order number for receipt
-      function generateOrderNumber() {
-        return 'ORD-' + Math.floor(100000 + Math.random() * 900000);
-      }
-      
-      // Format date for receipt
-      function formatDate(date) {
-        return new Intl.DateTimeFormat('en-US', {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit'
-        }).format(date);
-      }
-      
-      // Generate receipt HTML
-      function generateReceipt(formData) {
-        const orderNumber = generateOrderNumber();
-        const date = new Date();
+        // Validasi data item untuk menghindari error
+        const name = item.name || 'Produk Tanpa Nama';
+        const price = parseFloat(item.price) || 0;
+        const quantity = parseInt(item.quantity) || 1;
+        const total = price * quantity;
         
-        document.getElementById('receiptDate').textContent = formatDate(date);
-        document.getElementById('receiptOrderNumber').textContent = orderNumber;
-        
-        const receiptDetails = document.getElementById('receiptDetails');
-        receiptDetails.innerHTML = `
-          <div class="receipt-row">
-            <span>Customer:</span>
-            <strong>${formData.name}</strong>
-          </div>
-          <div class="receipt-row">
-            <span>Email:</span>
-            <strong>${formData.email}</strong>
-          </div>
-          <div class="receipt-row">
-            <span>Phone:</span>
-            <strong>${formData.phone}</strong>
-          </div>
-          <div class="receipt-row">
-            <span>Shipping Address:</span>
-            <strong>${formData.address}, ${formData.city}, ${formData.state} ${formData.zipCode}, ${formData.country}</strong>
-          </div>
+        itemElement.innerHTML = `
+          <span>${name}</span>
+          <span>${formatCurrency(price)}</span>
+          <span>${quantity}</span>
+          <span>${formatCurrency(total)}</span>
         `;
         
-        // Populate product items in receipt
-        const receiptProductBody = document.getElementById('receiptProductBody');
-        if (receiptProductBody) {
-          receiptProductBody.innerHTML = '';
+        cartItemsList.appendChild(itemElement);
+      });
+      
+      // Update total keranjang
+      if (cartTotalAmount) {
+        const totalAmount = cart.reduce((total, item) => {
+          return total + ((parseFloat(item.price) || 0) * (parseInt(item.quantity) || 1));
+        }, 0);
+        
+        cartTotalAmount.textContent = formatCurrency(totalAmount);
+      }
+    }
+  }
+  
+  // Fungsi untuk mengaktifkan/nonaktifkan tombol checkout
+  function toggleCheckoutButton(cart) {
+    const submitBtn = document.querySelector('.submit-btn');
+    if (submitBtn) {
+      if (!cart || cart.length === 0) {
+        submitBtn.disabled = true;
+        submitBtn.style.opacity = '0.5';
+        submitBtn.textContent = 'Keranjang kosong';
+      } else {
+        submitBtn.disabled = false;
+        submitBtn.style.opacity = '1';
+        submitBtn.textContent = 'Selesaikan Pesanan';
+      }
+    }
+  }
+  
+  // Perbaikan fungsi generateReceipt untuk memastikan data yang benar digunakan
+  function enhancedGenerateReceipt(formData) {
+    // Ambil cart data langsung dari localStorage untuk memastikan data terbaru
+    let cart;
+    try {
+      cart = JSON.parse(localStorage.getItem('literadiaCart')) || [];
+    } catch (error) {
+      console.error("Error saat parsing data keranjang untuk receipt:", error);
+      cart = [];
+    }
+    
+    const orderNumber = 'ORD-' + Math.floor(100000 + Math.random() * 900000);
+    const date = new Date();
+    
+    // Perbarui elemen receipt dengan data yang benar
+    document.getElementById('receiptDate').textContent = formatDate(date);
+    document.getElementById('receiptOrderNumber').textContent = orderNumber;
+    
+    // Tampilkan detail pelanggan
+    const receiptDetails = document.getElementById('receiptDetails');
+    if (receiptDetails) {
+      receiptDetails.innerHTML = `
+        <div class="receipt-row">
+          <span>Customer:</span>
+          <strong>${formData.name}</strong>
+        </div>
+        <div class="receipt-row">
+          <span>Email:</span>
+          <strong>${formData.email}</strong>
+        </div>
+        <div class="receipt-row">
+          <span>Phone:</span>
+          <strong>${formData.phone}</strong>
+        </div>
+        <div class="receipt-row">
+          <span>Shipping Address:</span>
+          <strong>${formData.address}, ${formData.city}, ${formData.state} ${formData.zipCode}, ${formData.country}</strong>
+        </div>
+      `;
+    }
+    
+    // Tampilkan produk di receipt
+    const receiptProductBody = document.getElementById('receiptProductBody');
+    if (receiptProductBody) {
+      receiptProductBody.innerHTML = '';
+      
+      if (cart.length === 0) {
+        const emptyRow = document.createElement('tr');
+        emptyRow.innerHTML = '<td colspan="4" style="text-align: center;">Tidak ada produk dalam keranjang</td>';
+        receiptProductBody.appendChild(emptyRow);
+      } else {
+        cart.forEach(item => {
+          // Validasi data item
+          const name = item.name || 'Produk Tanpa Nama';
+          const price = parseFloat(item.price) || 0;
+          const quantity = parseInt(item.quantity) || 1;
+          const total = price * quantity;
           
-          if (cart.length === 0) {
-            const emptyRow = document.createElement('tr');
-            emptyRow.innerHTML = '<td colspan="4" style="text-align: center;">No products in cart</td>';
-            receiptProductBody.appendChild(emptyRow);
-          } else {
-            cart.forEach(item => {
-              const row = document.createElement('tr');
-              row.innerHTML = `
-                <td>${item.name}</td>
-                <td>${formatCurrency(item.price)}</td>
-                <td>${item.quantity}</td>
-                <td>${formatCurrency(item.price * item.quantity)}</td>
-              `;
-              receiptProductBody.appendChild(row);
-            });
-          }
-        }
-        
-        // Update receipt total
-        const receiptTotal = document.getElementById('receiptTotalAmount');
-        if (receiptTotal) {
-          receiptTotal.textContent = formatCurrency(calculateCartTotal());
-        }
-        
-        // Add order number and date to form data for email
-        formData.orderNumber = orderNumber;
-        formData.orderDate = formatDate(date);
-        
-        // Add products and total to form data for email
-        formData.products = JSON.stringify(cart);
-        formData.orderTotal = formatCurrency(calculateCartTotal());
-        
-        // Create HTML product list for email
-        let productsHTML = '<table style="width:100%; border-collapse:collapse; margin-top:15px;">';
-        productsHTML += '<tr style="background-color:#f2f2f2;"><th style="padding:8px; text-align:left;">Product</th><th style="padding:8px; text-align:right;">Price</th><th style="padding:8px; text-align:center;">Qty</th><th style="padding:8px; text-align:right;">Total</th></tr>';
-        
-        if (cart.length === 0) {
-          productsHTML += '<tr><td colspan="4" style="padding:8px; text-align:center;">No products in cart</td></tr>';
-        } else {
-          cart.forEach(item => {
-            productsHTML += `
-              <tr>
-                <td style="padding:8px; border-bottom:1px solid #ddd;">${item.name}</td>
-                <td style="padding:8px; border-bottom:1px solid #ddd; text-align:right;">${formatCurrency(item.price)}</td>
-                <td style="padding:8px; border-bottom:1px solid #ddd; text-align:center;">${item.quantity}</td>
-                <td style="padding:8px; border-bottom:1px solid #ddd; text-align:right;">${formatCurrency(item.price * item.quantity)}</td>
-              </tr>
-            `;
-          });
-        }
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${name}</td>
+            <td>${formatCurrency(price)}</td>
+            <td>${quantity}</td>
+            <td>${formatCurrency(total)}</td>
+          `;
+          receiptProductBody.appendChild(row);
+        });
+      }
+    }
+    
+    // Hitung dan update total di receipt
+    const totalAmount = cart.reduce((total, item) => {
+      return total + ((parseFloat(item.price) || 0) * (parseInt(item.quantity) || 1));
+    }, 0);
+    
+    const receiptTotal = document.getElementById('receiptTotalAmount');
+    if (receiptTotal) {
+      receiptTotal.textContent = formatCurrency(totalAmount);
+    }
+    
+    // Tambahkan data untuk email
+    formData.orderNumber = orderNumber;
+    formData.orderDate = formatDate(date);
+    formData.products = JSON.stringify(cart);
+    formData.orderTotal = formatCurrency(totalAmount);
+    
+    // Buat HTML produk untuk email
+    let productsHTML = '<table style="width:100%; border-collapse:collapse; margin-top:15px;">';
+    productsHTML += '<tr style="background-color:#f2f2f2;"><th style="padding:8px; text-align:left;">Produk</th><th style="padding:8px; text-align:right;">Harga</th><th style="padding:8px; text-align:center;">Qty</th><th style="padding:8px; text-align:right;">Total</th></tr>';
+    
+    if (cart.length === 0) {
+      productsHTML += '<tr><td colspan="4" style="padding:8px; text-align:center;">Tidak ada produk dalam keranjang</td></tr>';
+    } else {
+      cart.forEach(item => {
+        // Validasi data item
+        const name = item.name || 'Produk Tanpa Nama';
+        const price = parseFloat(item.price) || 0;
+        const quantity = parseInt(item.quantity) || 1;
+        const total = price * quantity;
         
         productsHTML += `
           <tr>
-            <td colspan="3" style="padding:8px; font-weight:bold; text-align:right;">Total:</td>
-            <td style="padding:8px; font-weight:bold; text-align:right;">${formatCurrency(calculateCartTotal())}</td>
+            <td style="padding:8px; border-bottom:1px solid #ddd;">${name}</td>
+            <td style="padding:8px; border-bottom:1px solid #ddd; text-align:right;">${formatCurrency(price)}</td>
+            <td style="padding:8px; border-bottom:1px solid #ddd; text-align:center;">${quantity}</td>
+            <td style="padding:8px; border-bottom:1px solid #ddd; text-align:right;">${formatCurrency(total)}</td>
           </tr>
-        </table>`;
-        
-        formData.productsHTML = productsHTML;
-        
-        return formData;
+        `;
+      });
+    }
+    
+    productsHTML += `
+      <tr>
+        <td colspan="3" style="padding:8px; font-weight:bold; text-align:right;">Total:</td>
+        <td style="padding:8px; font-weight:bold; text-align:right;">${formatCurrency(totalAmount)}</td>
+      </tr>
+    </table>`;
+    
+    formData.productsHTML = productsHTML;
+    
+    return formData;
+  }
+  
+  // Override fungsi generateReceipt asli dengan versi yang ditingkatkan
+  if (typeof generateReceipt === 'function') {
+    console.log("Mengganti fungsi generateReceipt asli dengan versi yang ditingkatkan");
+    window.originalGenerateReceipt = generateReceipt;
+    generateReceipt = enhancedGenerateReceipt;
+  } else {
+    console.warn("Fungsi generateReceipt asli tidak ditemukan, menambahkan fungsi baru");
+    window.generateReceipt = enhancedGenerateReceipt;
+  }
+  
+  // Fungsi untuk memformat mata uang
+  function formatCurrency(amount) {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD'
+    }).format(amount);
+  }
+  
+  // Fungsi untuk memformat tanggal
+  function formatDate(date) {
+    return new Intl.DateTimeFormat('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    }).format(date);
+  }
+  
+  // Tambahkan hook untuk memastikan data keranjang digunakan dengan benar saat submit form
+  const checkoutForm = document.getElementById('checkoutForm');
+  if (checkoutForm) {
+    console.log("Hook checkout form ditemukan dan ditambahkan");
+    
+    // Simpan referensi ke event handler asli
+    const originalSubmitHandler = checkoutForm.onsubmit;
+    
+    // Ganti dengan handler baru yang memastikan data keranjang dipakai dengan benar
+    checkoutForm.onsubmit = function(e) {
+      e.preventDefault();
+      
+      // Ambil data keranjang terbaru dari localStorage
+      let cart;
+      try {
+        cart = JSON.parse(localStorage.getItem('literadiaCart')) || [];
+      } catch (error) {
+        console.error("Error saat parsing data keranjang:", error);
+        cart = [];
       }
       
-      // Function to display error messages
-      function showError(elementId, show) {
-        const element = document.getElementById(elementId);
-        if (element) {
-          element.style.display = show ? 'block' : 'none';
-        }
+      // Validasi keranjang
+      if (cart.length === 0) {
+        alert('Keranjang Anda kosong. Tambahkan produk sebelum checkout.');
+        return false;
       }
       
-      // Function for more flexible phone validation
-      function validatePhone(phone) {
-        // Remove all non-digit characters
-        const digits = phone.replace(/\D/g, '');
-        // Validate number of digits (minimum 7 digits)
-        return digits.length >= 7;
+      // Jika ada handler asli, panggil dengan konteks yang benar
+      if (typeof originalSubmitHandler === 'function') {
+        return originalSubmitHandler.call(this, e);
       }
-      
-      // Function for email validation
-      function validateEmail(email) {
-        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return re.test(email);
-      }
-      
-      // Form submit handler
-      const checkoutForm = document.getElementById('checkoutForm');
-      if (checkoutForm) {
-        checkoutForm.addEventListener('submit', function(e) {
-          e.preventDefault();
-
-          // Validasi jika keranjang kosong
-          if (cart.length === 0) {
-            alert('Your cart is empty. Add products before checkout.');
-            return;
-          }
-
-          const name = document.getElementById('name').value.trim();
-          const email = document.getElementById('email').value.trim();
-          const phone = document.getElementById('phone').value.trim();
-          const address = document.getElementById('address').value.trim();
-          const city = document.getElementById('city').value.trim();
-          const state = document.getElementById('state').value.trim();
-          const zipCode = document.getElementById('zipCode').value.trim();
-          const country = document.getElementById('country').value.trim();
-
-          let isValid = true;
+    };
+  } else {
+    console.warn("Checkout form tidak ditemukan untuk hook");
+  }
+</script>    
           
-          // Reset all error messages
-          document.querySelectorAll('.error-message').forEach(msg => msg.style.display = 'none');
-
-          // Form validation
-          if (name.length < 2) {
-            showError('nameError', true);
-            isValid = false;
-          }
-          
-          if (!validateEmail(email)) {
-            showError('emailError', true);
-            isValid = false;
-          }
-          
-          if (!validatePhone(phone)) {
-            showError('phoneError', true);
-            isValid = false;
-          }
-          
-          if (address.length < 5) {
-            showError('addressError', true);
-            isValid = false;
-          }
-          
-          if (city.length < 2) {
-            showError('cityError', true);
-            isValid = false;
-          }
-          
-          if (state.length < 2) {
-            showError('stateError', true);
-            isValid = false;
-          }
-          
-          if (zipCode.length < 3) {
-            showError('zipError', true);
-            isValid = false;
-          }
-          
-          if (country.length < 2) {
-            showError('countryError', true);
-            isValid = false;
-          }
-
-          if (isValid) {
-            try {
-              // Show loading indicator
-              document.getElementById('loadingIndicator').style.display = 'block';
-              
-              // Hide form
-              document.getElementById('checkoutForm').style.display = 'none';
-              
-              // Hide cart summary
-              document.querySelector('.cart-summary').style.display = 'none';
-              
-              // Prepare data to send
-              let formData = {
-                name: name,
-                email: email,
-                phone: phone,
-                address: address,
-                city: city,
-                state: state,
-                zipCode: zipCode,
-                country: country,
-                subject: "Your Literadia Order Confirmation",
-                to_email: email, // Send to customer
-                to_name: name,
-                from_name: "Literadia Bookstore",
-                reply_to: "literadia1@gmail.com"
-              };
-              
-              // Generate receipt and add data
-              formData = generateReceipt(formData);
-
-              // Send email to customer using EmailJS
-              emailjs.send("service_g9huhy2", "template_customer_receipt", formData)
-                .then(function(response) {
-                  console.log('Customer receipt sent:', response.status, response.text);
-                  
-                  // Now send notification to store owner
-                  let storeNotification = {
-                    ...formData,
-                    subject: "New Order: " + formData.orderNumber,
-                    to_email: "literadia1@gmail.com", // Your store email
-                    to_name: "Literadia Store",
-                    from_name: name,
-                    reply_to: email
-                  };
-                  
-                  return emailjs.send("service_g9huhy2", "template_8sqqqpn", storeNotification);
-                })
-                .then(function(response) {
-                  console.log('Store notification sent:', response.status, response.text);
-                  
-                  // Hide loading indicator
-                  document.getElementById('loadingIndicator').style.display = 'none';
-                  
-                  // Show success message and receipt
-                  document.getElementById('successMessage').style.display = 'block';
-                  document.getElementById('receiptContainer').style.display = 'block';
-                  
-                  // Scroll to receipt
-                  document.getElementById('receiptContainer').scrollIntoView({
-                    behavior: 'smooth'
-                  });
-                  
-                  // Clear cart from localStorage after successful order
-                  localStorage.removeItem('literadiaCart');
-                })
-                .catch(function(error) {
-                  console.log('FAILED...', error);
-                  
-                  // Hide loading indicator
-                  document.getElementById('loadingIndicator').style.display = 'none';
-                  
-                  // Show form and cart summary again
-                  document.getElementById('checkoutForm').style.display = 'block';
-                  document.querySelector('.cart-summary').style.display = 'block';
-                  
-                  alert('An error occurred while processing your order. Please try again.');
-                });
-            } catch (err) {
-              console.error("Error in sending process:", err);
-              
-              // Hide loading indicator
-              document.getElementById('loadingIndicator').style.display = 'none';
-              
-              // Show form and cart summary again
-              document.getElementById('checkoutForm').style.display = 'block';
-              document.querySelector('.cart-summary').style.display = 'block';
-              
-              alert('A system error occurred. Please try again later.');
-            }
-          }
-        });
-      } else {
-        console.error("Checkout form not found!");
-      }
-    });
   </script>
 </body>
 </html>
