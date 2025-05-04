@@ -738,8 +738,142 @@
   } else {
     console.warn("Checkout form tidak ditemukan untuk hook");
   }
-</script>    
-          
+    // Fungsi untuk memuat data cart saat halaman checkout dibuka
+document.addEventListener('DOMContentLoaded', function() {
+    displayCartItems();
+});
+
+function displayCartItems() {
+    // Ambil data cart dari localStorage
+    const cart = JSON.parse(localStorage.getItem('literadiaCart')) || [];
+    const cartItemsList = document.getElementById('cartItemsList');
+    const cartTotalAmount = document.getElementById('cartTotalAmount');
+    let total = 0;
+
+    // Bersihkan konten sebelumnya
+    cartItemsList.innerHTML = '';
+
+    // Tampilkan setiap item
+    cart.forEach(item => {
+        const itemTotal = item.price * item.quantity;
+        total += itemTotal;
+
+        const cartItem = document.createElement('div');
+        cartItem.className = 'cart-item';
+        cartItem.innerHTML = `
+            <span>${item.name}</span>
+            <span>$${item.price.toFixed(2)}</span>
+            <span>${item.quantity}</span>
+            <span>$${itemTotal.toFixed(2)}</span>
+        `;
+        cartItemsList.appendChild(cartItem);
+    });
+
+    // Update total
+    cartTotalAmount.textContent = `$${total.toFixed(2)}`;
+}
+
+// Fungsi untuk menghasilkan receipt
+function generateReceipt(formData) {
+    const cart = JSON.parse(localStorage.getItem('literadiaCart')) || [];
+    const orderNumber = 'ORD-' + Math.floor(100000 + Math.random() * 900000);
+    const date = new Date();
+
+    // Update receipt header
+    document.getElementById('receiptDate').textContent = date.toLocaleString();
+    document.getElementById('receiptOrderNumber').textContent = orderNumber;
+
+    // Update customer details
+    document.getElementById('receiptDetails').innerHTML = `
+        <div class="receipt-row">
+            <span>Customer:</span>
+            <strong>${formData.name}</strong>
+        </div>
+        <div class="receipt-row">
+            <span>Email:</span>
+            <strong>${formData.email}</strong>
+        </div>
+        <div class="receipt-row">
+            <span>Phone:</span>
+            <strong>${formData.phone}</strong>
+        </div>
+        <div class="receipt-row">
+            <span>Address:</span>
+            <strong>${formData.address}, ${formData.city}, ${formData.state} ${formData.zipCode}, ${formData.country}</strong>
+        </div>
+    `;
+
+    // Update product list
+    const productBody = document.getElementById('receiptProductBody');
+    productBody.innerHTML = '';
+    let total = 0;
+
+    cart.forEach(item => {
+        const itemTotal = item.price * item.quantity;
+        total += itemTotal;
+
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${item.name}</td>
+            <td>$${item.price.toFixed(2)}</td>
+            <td>${item.quantity}</td>
+            <td>$${itemTotal.toFixed(2)}</td>
+        `;
+        productBody.appendChild(row);
+    });
+
+    // Update total amount
+    document.getElementById('receiptTotalAmount').textContent = `$${total.toFixed(2)}`;
+
+    // Tampilkan receipt container
+    document.getElementById('receiptContainer').style.display = 'block';
+
+    // Opsional: Kosongkan cart setelah checkout berhasil
+    localStorage.removeItem('literadiaCart');
+    
+    return {
+        orderNumber,
+        orderDate: date.toLocaleString(),
+        customerDetails: formData,
+        items: cart,
+        total: total
+    };
+}
+
+// Handle form submission
+document.getElementById('checkoutForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const cart = JSON.parse(localStorage.getItem('literadiaCart')) || [];
+    if (cart.length === 0) {
+        alert('Your cart is empty!');
+        return;
+    }
+
+    // Tampilkan loading indicator
+    document.getElementById('loadingIndicator').style.display = 'block';
+
+    // Kumpulkan data form
+    const formData = {
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+        address: document.getElementById('address').value,
+        city: document.getElementById('city').value,
+        state: document.getElementById('state').value,
+        zipCode: document.getElementById('zipCode').value,
+        country: document.getElementById('country').value
+    };
+
+    // Generate receipt
+    const receiptData = generateReceipt(formData);
+
+    // Sembunyikan loading indicator
+    document.getElementById('loadingIndicator').style.display = 'none';
+    
+    // Tampilkan pesan sukses
+    document.getElementById('successMessage').style.display = 'block';
+});
   </script>
 </body>
 </html>
