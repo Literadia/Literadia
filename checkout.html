@@ -253,6 +253,13 @@
     .receipt-total span {
       color: var(--primary);
     }
+    .empty-cart-message {
+      text-align: center;
+      padding: 2rem;
+      color: var(--dark);
+      opacity: 0.7;
+      font-style: italic;
+    }
     
     @keyframes slideIn {
       from {
@@ -444,24 +451,8 @@
       // Initialize EmailJS with public key
       emailjs.init("Jj6VxNE6KpanmWfht");
       
-      // Sample product data - in a real implementation, this would come from your cart/session
-      // You would replace this with your actual shopping cart data retrieval method
-      const cart = JSON.parse(localStorage.getItem('literadiaCart')) || [
-        {
-          id: "book1",
-          name: "The Silent Echo",
-          price: 24.99,
-          quantity: 1, 
-          image: "book-cover-1.jpg"
-        },
-        {
-          id: "book2",
-          name: "Midnight in the Garden",
-          price: 19.99,
-          quantity: 2,
-          image: "book-cover-2.jpg"
-        }
-      ];
+      // Ambil data cart hanya dari localStorage tanpa fallback data sampel
+      const cart = JSON.parse(localStorage.getItem('literadiaCart')) || [];
       
       // Function to calculate cart total
       function calculateCartTotal() {
@@ -485,18 +476,26 @@
           // Clear previous content
           cartItemsList.innerHTML = '';
           
-          // Add each cart item
-          cart.forEach(item => {
-            const itemElement = document.createElement('div');
-            itemElement.className = 'cart-item';
-            itemElement.innerHTML = `
-              <span>${item.name}</span>
-              <span>${formatCurrency(item.price)}</span>
-              <span>${item.quantity}</span>
-              <span>${formatCurrency(item.price * item.quantity)}</span>
-            `;
-            cartItemsList.appendChild(itemElement);
-          });
+          if (cart.length === 0) {
+            // Tampilkan pesan jika keranjang kosong
+            const emptyCartMessage = document.createElement('div');
+            emptyCartMessage.className = 'empty-cart-message';
+            emptyCartMessage.innerHTML = 'Your cart is empty. Please add products before checkout.';
+            cartItemsList.appendChild(emptyCartMessage);
+          } else {
+            // Add each cart item
+            cart.forEach(item => {
+              const itemElement = document.createElement('div');
+              itemElement.className = 'cart-item';
+              itemElement.innerHTML = `
+                <span>${item.name}</span>
+                <span>${formatCurrency(item.price)}</span>
+                <span>${item.quantity}</span>
+                <span>${formatCurrency(item.price * item.quantity)}</span>
+              `;
+              cartItemsList.appendChild(itemElement);
+            });
+          }
           
           // Update total
           if (cartTotal) {
@@ -507,6 +506,16 @@
       
       // Call function to display cart items
       displayCartItems();
+      
+      // Disable form submission if cart is empty
+      if (cart.length === 0) {
+        const submitBtn = document.querySelector('.submit-btn');
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.style.opacity = '0.5';
+          submitBtn.textContent = 'Cart is empty';
+        }
+      }
       
       // Generate random order number for receipt
       function generateOrderNumber() {
@@ -557,16 +566,22 @@
         if (receiptProductBody) {
           receiptProductBody.innerHTML = '';
           
-          cart.forEach(item => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-              <td>${item.name}</td>
-              <td>${formatCurrency(item.price)}</td>
-              <td>${item.quantity}</td>
-              <td>${formatCurrency(item.price * item.quantity)}</td>
-            `;
-            receiptProductBody.appendChild(row);
-          });
+          if (cart.length === 0) {
+            const emptyRow = document.createElement('tr');
+            emptyRow.innerHTML = '<td colspan="4" style="text-align: center;">No products in cart</td>';
+            receiptProductBody.appendChild(emptyRow);
+          } else {
+            cart.forEach(item => {
+              const row = document.createElement('tr');
+              row.innerHTML = `
+                <td>${item.name}</td>
+                <td>${formatCurrency(item.price)}</td>
+                <td>${item.quantity}</td>
+                <td>${formatCurrency(item.price * item.quantity)}</td>
+              `;
+              receiptProductBody.appendChild(row);
+            });
+          }
         }
         
         // Update receipt total
@@ -587,16 +602,20 @@
         let productsHTML = '<table style="width:100%; border-collapse:collapse; margin-top:15px;">';
         productsHTML += '<tr style="background-color:#f2f2f2;"><th style="padding:8px; text-align:left;">Product</th><th style="padding:8px; text-align:right;">Price</th><th style="padding:8px; text-align:center;">Qty</th><th style="padding:8px; text-align:right;">Total</th></tr>';
         
-        cart.forEach(item => {
-          productsHTML += `
-            <tr>
-              <td style="padding:8px; border-bottom:1px solid #ddd;">${item.name}</td>
-              <td style="padding:8px; border-bottom:1px solid #ddd; text-align:right;">${formatCurrency(item.price)}</td>
-              <td style="padding:8px; border-bottom:1px solid #ddd; text-align:center;">${item.quantity}</td>
-              <td style="padding:8px; border-bottom:1px solid #ddd; text-align:right;">${formatCurrency(item.price * item.quantity)}</td>
-            </tr>
-          `;
-        });
+        if (cart.length === 0) {
+          productsHTML += '<tr><td colspan="4" style="padding:8px; text-align:center;">No products in cart</td></tr>';
+        } else {
+          cart.forEach(item => {
+            productsHTML += `
+              <tr>
+                <td style="padding:8px; border-bottom:1px solid #ddd;">${item.name}</td>
+                <td style="padding:8px; border-bottom:1px solid #ddd; text-align:right;">${formatCurrency(item.price)}</td>
+                <td style="padding:8px; border-bottom:1px solid #ddd; text-align:center;">${item.quantity}</td>
+                <td style="padding:8px; border-bottom:1px solid #ddd; text-align:right;">${formatCurrency(item.price * item.quantity)}</td>
+              </tr>
+            `;
+          });
+        }
         
         productsHTML += `
           <tr>
@@ -637,6 +656,12 @@
       if (checkoutForm) {
         checkoutForm.addEventListener('submit', function(e) {
           e.preventDefault();
+
+          // Validasi jika keranjang kosong
+          if (cart.length === 0) {
+            alert('Your cart is empty. Add products before checkout.');
+            return;
+          }
 
           const name = document.getElementById('name').value.trim();
           const email = document.getElementById('email').value.trim();
@@ -756,8 +781,8 @@
                     behavior: 'smooth'
                   });
                   
-                  // Clear cart from localStorage
-                  // localStorage.removeItem('literadiaCart');
+                  // Clear cart from localStorage after successful order
+                  localStorage.removeItem('literadiaCart');
                 })
                 .catch(function(error) {
                   console.log('FAILED...', error);
