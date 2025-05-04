@@ -2156,22 +2156,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
-// Tambahkan fungsi ini di index.html
-function addToCart(product) {
-    // Ambil data cart yang ada atau buat array baru jika belum ada
-    let cart = JSON.parse(localStorage.getItem('literadiaCart')) || [];
-    
-    // Format produk yang akan ditambahkan
-    const productToAdd = {
-        id: product.id,
-        name: product.name,
-        price: product.price,
-        quantity: 1, // atau jumlah yang dipilih user
-        image: product.image // opsional
-    };
-    // Simpan kembali ke localStorage
-    localStorage.setItem('literadiaCart', JSON.stringify(cart));
-    
         
     </script>
     </body>
