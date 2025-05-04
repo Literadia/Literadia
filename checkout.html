@@ -180,6 +180,80 @@
       margin-top: 1rem;
       cursor: pointer;
     }
+    
+    /* Product list styles */
+    .cart-summary {
+      margin: 2rem 0;
+      padding: 1.5rem;
+      background-color: var(--light);
+      border-radius: 8px;
+    }
+    .cart-summary h3 {
+      color: var(--primary);
+      margin-bottom: 1rem;
+      border-bottom: 1px solid var(--accent);
+      padding-bottom: 0.5rem;
+    }
+    .cart-items {
+      margin-bottom: 1rem;
+    }
+    .cart-item {
+      display: grid;
+      grid-template-columns: 3fr 1fr 1fr 1fr;
+      padding: 0.8rem 0;
+      border-bottom: 1px dashed var(--accent);
+    }
+    .cart-header {
+      font-weight: 600;
+      color: var(--dark);
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 0.5rem;
+    }
+    .cart-total {
+      display: flex;
+      justify-content: space-between;
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 2px solid var(--accent);
+    }
+    .cart-total span:last-child {
+      color: var(--primary);
+    }
+    .product-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+    }
+    .product-table th {
+      background-color: var(--accent);
+      padding: 0.8rem;
+      text-align: left;
+    }
+    .product-table td {
+      padding: 0.8rem;
+      border-bottom: 1px solid var(--accent);
+    }
+    .product-table tr:last-child td {
+      border-bottom: none;
+    }
+    .receipt-products {
+      margin: 1.5rem 0;
+      border-top: 1px solid var(--accent);
+      border-bottom: 1px solid var(--accent);
+      padding: 1rem 0;
+    }
+    .receipt-total {
+      margin-top: 1rem;
+      text-align: right;
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+    .receipt-total span {
+      color: var(--primary);
+    }
+    
     @keyframes slideIn {
       from {
         transform: translateY(-20px);
@@ -206,6 +280,13 @@
       }
       .checkout-header {
         margin: 2rem 0;
+      }
+      .cart-item {
+        grid-template-columns: 2fr 1fr 1fr;
+      }
+      .product-table th:nth-child(3),
+      .product-table td:nth-child(3) {
+        display: none;
       }
     }
     .loading {
@@ -239,10 +320,30 @@
 
     <div class="checkout-header">
       <h1>Checkout</h1>
-      <p>Please fill in your delivery information</p>
+      <p>Please review your order and fill in your delivery information</p>
     </div>
 
     <div class="form-content">
+      <!-- Cart Summary Section -->
+      <div class="cart-summary">
+        <h3>Your Order</h3>
+        <div class="cart-items">
+          <div class="cart-item cart-header">
+            <span>Product</span>
+            <span>Price</span>
+            <span>Qty</span>
+            <span>Total</span>
+          </div>
+          <div id="cartItemsList">
+            <!-- Cart items will be loaded here by JavaScript -->
+          </div>
+        </div>
+        <div class="cart-total">
+          <span>Total</span>
+          <span id="cartTotalAmount">$0.00</span>
+        </div>
+      </div>
+
       <form id="checkoutForm">
         <div class="form-group">
           <label for="name">Full Name *</label>
@@ -305,9 +406,28 @@
           <h2>Order Receipt</h2>
           <p>Thank you for shopping with Literadia</p>
           <p id="receiptDate"></p>
+          <p>Order #: <span id="receiptOrderNumber"></span></p>
         </div>
         <div class="receipt-details" id="receiptDetails">
           <!-- Will be filled by JavaScript -->
+        </div>
+        <div class="receipt-products">
+          <table class="product-table" id="receiptProductTable">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Qty</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody id="receiptProductBody">
+              <!-- Will be filled by JavaScript -->
+            </tbody>
+          </table>
+          <div class="receipt-total">
+            Total: <span id="receiptTotalAmount">$0.00</span>
+          </div>
         </div>
         <div class="receipt-footer">
           <p>We appreciate your business!</p>
@@ -319,17 +439,81 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
   <script>
-    // Menunggu dokumen selesai dimuat sebelum menjalankan script
+    // Wait for document to load before running script
     document.addEventListener('DOMContentLoaded', function() {
-      // Initialize EmailJS dengan public key
+      // Initialize EmailJS with public key
       emailjs.init("Jj6VxNE6KpanmWfht");
       
-      // Generate nomor order acak untuk receipt
+      // Sample product data - in a real implementation, this would come from your cart/session
+      // You would replace this with your actual shopping cart data retrieval method
+      const cart = JSON.parse(localStorage.getItem('literadiaCart')) || [
+        {
+          id: "book1",
+          name: "The Silent Echo",
+          price: 24.99,
+          quantity: 1, 
+          image: "book-cover-1.jpg"
+        },
+        {
+          id: "book2",
+          name: "Midnight in the Garden",
+          price: 19.99,
+          quantity: 2,
+          image: "book-cover-2.jpg"
+        }
+      ];
+      
+      // Function to calculate cart total
+      function calculateCartTotal() {
+        return cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+      }
+      
+      // Function to format currency
+      function formatCurrency(amount) {
+        return new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'USD'
+        }).format(amount);
+      }
+      
+      // Populate cart items in the checkout page
+      function displayCartItems() {
+        const cartItemsList = document.getElementById('cartItemsList');
+        const cartTotal = document.getElementById('cartTotalAmount');
+        
+        if (cartItemsList) {
+          // Clear previous content
+          cartItemsList.innerHTML = '';
+          
+          // Add each cart item
+          cart.forEach(item => {
+            const itemElement = document.createElement('div');
+            itemElement.className = 'cart-item';
+            itemElement.innerHTML = `
+              <span>${item.name}</span>
+              <span>${formatCurrency(item.price)}</span>
+              <span>${item.quantity}</span>
+              <span>${formatCurrency(item.price * item.quantity)}</span>
+            `;
+            cartItemsList.appendChild(itemElement);
+          });
+          
+          // Update total
+          if (cartTotal) {
+            cartTotal.textContent = formatCurrency(calculateCartTotal());
+          }
+        }
+      }
+      
+      // Call function to display cart items
+      displayCartItems();
+      
+      // Generate random order number for receipt
       function generateOrderNumber() {
         return 'ORD-' + Math.floor(100000 + Math.random() * 900000);
       }
       
-      // Format tanggal untuk receipt
+      // Format date for receipt
       function formatDate(date) {
         return new Intl.DateTimeFormat('en-US', {
           year: 'numeric',
@@ -346,13 +530,10 @@
         const date = new Date();
         
         document.getElementById('receiptDate').textContent = formatDate(date);
+        document.getElementById('receiptOrderNumber').textContent = orderNumber;
         
         const receiptDetails = document.getElementById('receiptDetails');
         receiptDetails.innerHTML = `
-          <div class="receipt-row">
-            <span>Order Number:</span>
-            <strong>${orderNumber}</strong>
-          </div>
           <div class="receipt-row">
             <span>Customer:</span>
             <strong>${formData.name}</strong>
@@ -371,14 +552,65 @@
           </div>
         `;
         
-        // Tambahkan nomor order ke form data untuk email
+        // Populate product items in receipt
+        const receiptProductBody = document.getElementById('receiptProductBody');
+        if (receiptProductBody) {
+          receiptProductBody.innerHTML = '';
+          
+          cart.forEach(item => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${item.name}</td>
+              <td>${formatCurrency(item.price)}</td>
+              <td>${item.quantity}</td>
+              <td>${formatCurrency(item.price * item.quantity)}</td>
+            `;
+            receiptProductBody.appendChild(row);
+          });
+        }
+        
+        // Update receipt total
+        const receiptTotal = document.getElementById('receiptTotalAmount');
+        if (receiptTotal) {
+          receiptTotal.textContent = formatCurrency(calculateCartTotal());
+        }
+        
+        // Add order number and date to form data for email
         formData.orderNumber = orderNumber;
         formData.orderDate = formatDate(date);
+        
+        // Add products and total to form data for email
+        formData.products = JSON.stringify(cart);
+        formData.orderTotal = formatCurrency(calculateCartTotal());
+        
+        // Create HTML product list for email
+        let productsHTML = '<table style="width:100%; border-collapse:collapse; margin-top:15px;">';
+        productsHTML += '<tr style="background-color:#f2f2f2;"><th style="padding:8px; text-align:left;">Product</th><th style="padding:8px; text-align:right;">Price</th><th style="padding:8px; text-align:center;">Qty</th><th style="padding:8px; text-align:right;">Total</th></tr>';
+        
+        cart.forEach(item => {
+          productsHTML += `
+            <tr>
+              <td style="padding:8px; border-bottom:1px solid #ddd;">${item.name}</td>
+              <td style="padding:8px; border-bottom:1px solid #ddd; text-align:right;">${formatCurrency(item.price)}</td>
+              <td style="padding:8px; border-bottom:1px solid #ddd; text-align:center;">${item.quantity}</td>
+              <td style="padding:8px; border-bottom:1px solid #ddd; text-align:right;">${formatCurrency(item.price * item.quantity)}</td>
+            </tr>
+          `;
+        });
+        
+        productsHTML += `
+          <tr>
+            <td colspan="3" style="padding:8px; font-weight:bold; text-align:right;">Total:</td>
+            <td style="padding:8px; font-weight:bold; text-align:right;">${formatCurrency(calculateCartTotal())}</td>
+          </tr>
+        </table>`;
+        
+        formData.productsHTML = productsHTML;
         
         return formData;
       }
       
-      // Fungsi untuk menampilkan pesan error
+      // Function to display error messages
       function showError(elementId, show) {
         const element = document.getElementById(elementId);
         if (element) {
@@ -386,21 +618,21 @@
         }
       }
       
-      // Fungsi untuk validasi nomor telepon lebih fleksibel
+      // Function for more flexible phone validation
       function validatePhone(phone) {
-        // Menghapus semua karakter non-digit
+        // Remove all non-digit characters
         const digits = phone.replace(/\D/g, '');
-        // Validasi jumlah digit (minimal 7 digit)
+        // Validate number of digits (minimum 7 digits)
         return digits.length >= 7;
       }
       
-      // Fungsi untuk validasi email
+      // Function for email validation
       function validateEmail(email) {
         const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return re.test(email);
       }
       
-      // Handler submit form
+      // Form submit handler
       const checkoutForm = document.getElementById('checkoutForm');
       if (checkoutForm) {
         checkoutForm.addEventListener('submit', function(e) {
@@ -417,10 +649,10 @@
 
           let isValid = true;
           
-          // Reset semua pesan error
+          // Reset all error messages
           document.querySelectorAll('.error-message').forEach(msg => msg.style.display = 'none');
 
-          // Validasi form
+          // Form validation
           if (name.length < 2) {
             showError('nameError', true);
             isValid = false;
@@ -463,13 +695,16 @@
 
           if (isValid) {
             try {
-              // Tampilkan loading indicator
+              // Show loading indicator
               document.getElementById('loadingIndicator').style.display = 'block';
               
-              // Sembunyikan form
+              // Hide form
               document.getElementById('checkoutForm').style.display = 'none';
               
-              // Persiapkan data untuk dikirim
+              // Hide cart summary
+              document.querySelector('.cart-summary').style.display = 'none';
+              
+              // Prepare data to send
               let formData = {
                 name: name,
                 email: email,
@@ -479,59 +714,79 @@
                 state: state,
                 zipCode: zipCode,
                 country: country,
-                subject: "New Order from " + name,
-                to_email: "literadia1@gmail.com",
-                to_name: "Literadia Store",
-                from_name: name,
-                reply_to: email
+                subject: "Your Literadia Order Confirmation",
+                to_email: email, // Send to customer
+                to_name: name,
+                from_name: "Literadia Bookstore",
+                reply_to: "literadia1@gmail.com"
               };
               
-              // Generate receipt dan tambahkan data
+              // Generate receipt and add data
               formData = generateReceipt(formData);
 
-              // Kirim email menggunakan EmailJS
-              emailjs.send("service_g9huhy2", "template_8sqqqpn" , formData)
+              // Send email to customer using EmailJS
+              emailjs.send("service_g9huhy2", "template_customer_receipt", formData)
                 .then(function(response) {
-                  console.log('SUCCESS!', response.status, response.text);
+                  console.log('Customer receipt sent:', response.status, response.text);
                   
-                  // Sembunyikan loading indicator
+                  // Now send notification to store owner
+                  let storeNotification = {
+                    ...formData,
+                    subject: "New Order: " + formData.orderNumber,
+                    to_email: "literadia1@gmail.com", // Your store email
+                    to_name: "Literadia Store",
+                    from_name: name,
+                    reply_to: email
+                  };
+                  
+                  return emailjs.send("service_g9huhy2", "template_8sqqqpn", storeNotification);
+                })
+                .then(function(response) {
+                  console.log('Store notification sent:', response.status, response.text);
+                  
+                  // Hide loading indicator
                   document.getElementById('loadingIndicator').style.display = 'none';
                   
-                  // Tampilkan pesan sukses dan receipt
+                  // Show success message and receipt
                   document.getElementById('successMessage').style.display = 'block';
                   document.getElementById('receiptContainer').style.display = 'block';
                   
-                  // Scroll ke receipt
+                  // Scroll to receipt
                   document.getElementById('receiptContainer').scrollIntoView({
                     behavior: 'smooth'
                   });
+                  
+                  // Clear cart from localStorage
+                  // localStorage.removeItem('literadiaCart');
                 })
                 .catch(function(error) {
                   console.log('FAILED...', error);
                   
-                  // Sembunyikan loading indicator
+                  // Hide loading indicator
                   document.getElementById('loadingIndicator').style.display = 'none';
                   
-                  // Tampilkan form kembali
+                  // Show form and cart summary again
                   document.getElementById('checkoutForm').style.display = 'block';
+                  document.querySelector('.cart-summary').style.display = 'block';
                   
-                  alert('Terjadi kesalahan saat memproses pesanan Anda. Silakan coba lagi.');
+                  alert('An error occurred while processing your order. Please try again.');
                 });
             } catch (err) {
-              console.error("Error dalam proses pengiriman:", err);
+              console.error("Error in sending process:", err);
               
-              // Sembunyikan loading indicator
+              // Hide loading indicator
               document.getElementById('loadingIndicator').style.display = 'none';
               
-              // Tampilkan form kembali
+              // Show form and cart summary again
               document.getElementById('checkoutForm').style.display = 'block';
+              document.querySelector('.cart-summary').style.display = 'block';
               
-              alert('Terjadi kesalahan dalam sistem. Silakan coba lagi nanti.');
+              alert('A system error occurred. Please try again later.');
             }
           }
         });
       } else {
-        console.error("Form checkout tidak ditemukan!");
+        console.error("Checkout form not found!");
       }
     });
   </script>
